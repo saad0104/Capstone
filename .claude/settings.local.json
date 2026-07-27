@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f /tmp/claude-1000/-home-saad-Capstone/df845548-7f06-4bd5-b6d9-77fdfbf4397b/scratchpad/google001.html /tmp/claude-1000/-home-saad-Capstone/df845548-7f06-4bd5-b6d9-77fdfbf4397b/scratchpad/google002.html /tmp/claude-1000/-home-saad-Capstone/df845548-7f06-4bd5-b6d9-77fdfbf4397b/scratchpad/ms001.html)"
+    ]
+  }
+}
