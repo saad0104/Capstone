@@ -1,0 +1,3 @@
+[build]
+  # Replace "dist" with the actual folder name where your index.html lives
+  publish = "frontend"
