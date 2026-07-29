@@ -1,8 +1,13 @@
 flask
+flask-cors
 sqlalchemy
 pydantic
 python-dotenv
 requests
 pytest
-openai
-spacy
+langchain
+langchain-core
+langchain-openai
+langchain-google-genai
+langchain-ollama
+nltk
