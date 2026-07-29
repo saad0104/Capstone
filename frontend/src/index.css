@@ -12,4 +12,5 @@ body {
     Roboto,
     "Helvetica Neue",
     Arial;
+  @apply bg-surface text-slate-100;
 }

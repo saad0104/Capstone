@@ -117,7 +117,7 @@ Impact: <consequences (positive/negative)>
 
 **Decision:** Option C (simple per-minute limit, 10 requests/min per IP).  
 **Rationale:** MVP doesn't need distributed rate limiting; simple decorator works.  
-**Outcome:** Easy to implement and test.  
+**Outcome:** Not yet implemented as of the Phase 2 backend build (2026-07-28) — deliberately deferred as a stretch item so it didn't block getting `/api/analyze` working end-to-end. Left as `# TODO(stretch)` in `backend/app.py`.  
 **Impact:** Scales poorly if deployed to multiple servers; should upgrade to Redis-backed rate limiting for production.
 
 ---
@@ -141,6 +141,111 @@ Impact: <consequences (positive/negative)>
 
 ---
 
+### 7. Phase 2 Backend Framework: Flask vs FastAPI
+
+**Date:** 2026-07-28  
+**Area:** backend  
+**Title:** Keep Flask for Phase 2, defer FastAPI  
+**Context:** Only `/health` existed on the Flask skeleton going into Phase 2; a request came in to consider switching to FastAPI (async, native Pydantic integration, auto-generated OpenAPI docs).
+
+**Options:**
+
+- **A: Migrate to FastAPI** — nothing real to migrate yet since only `/health` existed, so the switch would be cheap now and expensive later
+- **B: Keep Flask** — build `/api/analyze` etc. on the existing skeleton, revisit the framework later if needed
+
+**Decision:** Option B.  
+**Rationale:** Avoid stacking a framework migration on top of the first real backend implementation in the same pass; keep the change surface minimal for MVP.  
+**Outcome:** `backend/app.py` now has `/api/analyze`, `/api/alerts` (list/detail/delete) on Flask, with manual Pydantic validation (no native request/response integration like FastAPI would provide). 18 passing tests, live-verified against a real Gemini call.  
+**Impact:** Pydantic validation in Flask is more boilerplate than FastAPI would need (manual `model_validate` + `ValidationError` handling per route). A FastAPI migration remains straightforward later since Pydantic schemas are already the validation layer.
+
+---
+
+### 8. LLM Orchestration: LangChain vs LangGraph, and multi-provider support
+
+**Date:** 2026-07-28  
+**Area:** backend  
+**Title:** LangChain-only chain (not LangGraph), provider registry for Gemini/Grok/Ollama  
+**Context:** The placeholder `LLMService.summarize()` just truncated text to 280 characters and never called a real LLM. Needed a real implementation, plus a request to support multiple LLM providers (Gemini, Grok, local Ollama) rather than hardcoding one.
+
+**Options:**
+
+- **A: Full LangGraph agent workflow** — multi-node graph with conditional routing; more powerful, more moving parts to debug for a capstone deadline
+- **B: LangChain only** — a single `prompt | chat_model | PydanticOutputParser` chain (LCEL), matching the already-decided 2-shot structured-JSON prompt strategy (decision #2 above)
+- **Provider selection — A: per-request frontend selector now** vs **B: single configurable default via `LLM_PROVIDER` env var, registry pattern so a selector is a small future addition**
+
+**Decision:** LangChain only (Option B), and a provider registry with a single active provider via `.env` (Option B on provider selection).  
+**Rationale:** MVP-first — a full agent graph isn't needed for a single-call structured-extraction task, and per-request provider switching has no UI to expose it yet (frontend is Phase 3). The registry pattern (`PROVIDER_REGISTRY` dict of factory functions in `backend/services/llm_service.py`) means adding the frontend selector later is a small addition, not a rewrite.  
+**Outcome:** `backend/services/llm_service.py` rewritten around `LLMAnalysis` (Pydantic schema: summary/threat_type/severity/recommended_action — deliberately *not* `ioc_list`, since IoCs stay exclusively regex-derived per decision #4). `_build_gemini`/`_build_grok`/`_build_ollama` factory functions; Grok reuses `langchain_openai.ChatOpenAI` with a custom `base_url` since its API is OpenAI-compatible, avoiding a separate SDK. `get_llm_service()` is a lazy singleton so a missing API key doesn't crash `flask run` or pytest collection at import time. Live-verified against a real Gemini key.  
+**Impact:** Only the Gemini path has been tested against a live provider; Grok and Ollama are implemented on the same pattern but unverified. Default Gemini model name required a fix mid-session (`gemini-1.5-flash` had been retired; corrected to `gemini-2.5-flash` after checking `ListModels` against the actual key).
+
+---
+
+### 9. Preprocessing NLP Dependency: nltk replaces spaCy
+
+**Date:** 2026-07-28  
+**Area:** backend  
+**Title:** Swap the unused `spacy` dependency for `nltk`  
+**Context:** `requirements.txt` listed `spacy` since Phase 0, but nothing in `backend/` ever imported it — `preprocess.py` was always pure regex. A request came in to use `nltk` instead.
+
+**Decision:** Removed `spacy` from `requirements.txt`, added `nltk`. Regex in `preprocess.py` remains the sole, authoritative IoC extractor (per decision #3's hybrid-preprocessing rationale) — nltk is staged for future tokenization/sentence-splitting needs, not wired into any pipeline step yet.  
+**Rationale:** Neither library was actually in use, so this was a low-risk swap; keeping regex authoritative matters because it's the same extraction method the Phase 1 evaluation ground-truth CSVs were built with — changing it would silently invalidate that ground truth.  
+**Outcome:** `nltk` installed, unused. No behavior change to `extract_iocs()`.  
+**Impact:** None yet. Revisit when there's a concrete need (e.g., chunking long reports before the LLM call).
+
+---
+
+### 10. Phase 3 Frontend Routing: react-router-dom vs state-based view switch
+
+**Date:** 2026-07-29  
+**Area:** frontend  
+**Title:** Real routes over a lightweight state switch  
+**Context:** The frontend scaffold had no routing at all — `App.jsx` was a single placeholder view. Needed to decide how to navigate between Analyze/Alerts List/Alert Detail.
+
+**Options:**
+
+- **A: `react-router-dom`** — real URLs (`/`, `/alerts`, `/alerts/:id`), deep-linkable/shareable, adds one dependency
+- **B: State-based view switch** — no new dependency, matches the minimal-dependency approach used for the backend, but no bookmarkable alert URLs
+
+**Decision:** Option A.  
+**Rationale:** A dashboard where individual alerts can't be linked to is a real UX gap for an analyst workflow; the dependency cost is low for a well-established, actively-maintained library already compatible with React 18.  
+**Outcome:** `AlertDetailPage` reads `:id` via `useParams()`, falls back to a direct `getAlert(id)` fetch when the alert isn't already in the Alerts Context (covers deep-linking).  
+**Impact:** None negative observed; one more dependency in `package.json`.
+
+---
+
+### 11. Frontend LLM Provider Selector
+
+**Date:** 2026-07-29  
+**Area:** frontend, backend  
+**Title:** Expose Gemini/Grok/Ollama selection in the UI, labeled honestly  
+**Context:** `LLMService.__init__` was built in decision #8 specifically so a per-request provider could be added later without a rewrite. A request came in to actually add it to the frontend now.
+
+**Decision:** Added `AnalyzeRequest.provider: Optional[str] = None`; `app.py`'s `analyze()` constructs `LLMService(provider=...)` directly when supplied (catching unknown-provider `ValueError` as a 400, distinct from a 502 provider failure). Frontend `ProviderSelector` shows all three options but visibly badges Grok and Ollama as "unverified" (tooltip: implemented but never live-verified end-to-end) rather than hiding them or presenting them as equally reliable to Gemini.  
+**Rationale:** Decision #8 already logged that only Gemini had been live-verified — surfacing Grok/Ollama without that caveat would mislead a user into thinking all three are equally trustworthy.  
+**Outcome:** Live-verified: the default/Gemini path works end-to-end from the browser; an unknown provider name correctly returns 400, not 502.  
+**Impact:** Grok/Ollama remain untested against real credentials/a local instance — this doc still doesn't claim otherwise.
+
+---
+
+### 12. CORS: flask-cors vs dev-only Vite proxy
+
+**Date:** 2026-07-29  
+**Area:** backend  
+**Title:** flask-cors with an env-configurable allowlist  
+**Context:** No CORS handling existed anywhere in the backend. `docs/architecture.md` already commits to separate production hosting origins (frontend on Vercel/Netlify, backend on Render/Railway), so this needed a fix that works in both dev and prod, not just locally.
+
+**Options:**
+
+- **A: Vite dev-server proxy** — simplest for local dev, but solves nothing for the documented separate-origin production deployment
+- **B: `flask-cors`, allowed origins from a `CORS_ORIGINS` env var** — one mechanism for both dev and prod
+
+**Decision:** Option B.  
+**Rationale:** A dev-only fix that has to be redone differently at deploy time isn't actually solving the problem the architecture doc already committed to.  
+**Outcome:** `CORS(app, origins=[...])` read from `CORS_ORIGINS` (default `http://localhost:5173`) inside `create_app()`. Live-verified: `Access-Control-Allow-Origin` header present on real responses when called with a `localhost:5173` `Origin` header.  
+**Impact:** Deploying to prod requires setting `CORS_ORIGINS` to the real frontend URL — documented in `docs/architecture.md`'s Deployment Model section so it isn't missed later.
+
+---
+
 ## Lessons Learned
 
 ### Phase 0 (Setup)
@@ -157,6 +262,19 @@ Impact: <consequences (positive/negative)>
 - ✓ Extract IoCs with one deterministic, uniform method (regex, matching `backend/preprocess.py`) across every record rather than mixing manual/fetched enrichment for some rows and nothing for others — inconsistent methodology was the root cause of the CVE issue above.
 - ⚠ A page-summarizing fetch tool is unreliable for verbatim data like file hashes; `curl` the raw HTML and verify matches by surrounding context instead.
 - Exit criteria met: 50 raw documents across 5 publishers (target 50–100), 20 balanced, human-reviewed labeled records in `data/annotations/labels.csv` (target 20).
+
+### Phase 2 (Backend, complete 2026-07-28)
+
+- ✓ `AlertOut.model_validate()` on a raw ORM object fails if a stored field's shape doesn't match the response schema (e.g. `ioc_list` stored as a dict, exposed as `List[str]`) — validation runs before any post-processing code gets a chance to reshape it. Flatten/reshape into a plain dict first, then construct the Pydantic model from that.
+- ✓ Pydantic v2's `ValidationError.errors()` can include non-JSON-serializable objects in `ctx` for custom validator errors — call it with `include_context=False` before passing to `jsonify`, or a clean 400 becomes an opaque 500.
+- ⚠ Always check a provider's model catalog (e.g. `ListModels`) against the actual API key before hardcoding a default model name — `gemini-1.5-flash` was already retired by the time this was built.
+- ⚠ A real secret briefly ended up in `.env.example` (git-tracked) instead of `.env` (gitignored) by human error. Caught before any commit via `git log --all -p`, but the lesson stands: always verify a secret's destination file is actually gitignored, don't assume from the filename.
+
+### Phase 3 (Frontend, complete 2026-07-29)
+
+- ⚠ **`postcss.config.cjs` never existed**, even though `tailwindcss`/`autoprefixer` were in `package.json` since Phase 0 — so `@tailwind`/`@apply` directives were being shipped to the browser as literal unprocessed text the entire time. Nothing caught this earlier because the original placeholder `App.jsx` only used a couple of utility classes that happened to not visibly break anything. Caught by inspecting the actual built CSS output size/content, not by trusting that `vite build` exiting successfully meant the output was correct.
+- ✓ Separate frontend/backend origins (even just `:5173` vs `:5000` in local dev) need CORS solved deliberately — see decision #12. Don't discover this only when a deploy happens.
+- ⚠ No real browser was used to verify the UI — verification was production build success, dev-server module-transform checks (catches syntax/import errors), and full backend API verification with real CORS headers. Actual rendered layout/interactivity/visual correctness still needs a human to click through it.
 
 ### Prompt Engineering (in progress)
 
@@ -210,16 +328,17 @@ Notes: Includes LLM API roundtrip (~6s), preprocessing (~0.5s), DB write (~0.1s)
 
 ## Refactoring Candidates
 
-- [ ] Extract LLMService into a separate module with pluggable backends (OpenAI, Gemini, local)
+- [x] Extract LLMService into a separate module with pluggable backends (OpenAI, Gemini, local) — done 2026-07-28, see decision #8; `PROVIDER_REGISTRY` in `backend/services/llm_service.py` (Gemini/Grok/Ollama, not OpenAI directly)
 - [ ] Add database session pooling for concurrent requests
-- [ ] Migrate tests to pytest with fixtures for mocking LLM API
+- [x] Migrate tests to pytest with fixtures for mocking LLM API — done 2026-07-28, `backend/tests/` with a `mock_llm` fixture, 18 passing tests
 - [ ] Add frontend unit tests with React Testing Library
 
 ---
 
 ## References
 
-- [spaCy NER documentation](https://spacy.io/usage/information-extraction)
-- [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat/create)
+- [LangChain LCEL / structured output](https://python.langchain.com/docs/concepts/lcel/)
+- [Google Gemini API](https://ai.google.dev/gemini-api/docs)
+- [nltk documentation](https://www.nltk.org/) (staged, not yet wired into preprocessing)
 - [Flask best practices](https://flask.palletsprojects.com/en/latest/)
 - [React Context API](https://react.dev/reference/react/createContext)

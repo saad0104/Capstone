@@ -21,12 +21,11 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-2. Start the backend (development):
+2. Start the backend (development). Run from the repo root, not `backend/` — `backend` is a Python package now (relative imports), so it must be invoked as `backend.app`, not as a standalone script:
 
 ```bash
 source .venv/bin/activate
-cd backend
-export FLASK_APP=app.py
+export FLASK_APP=backend.app:create_app
 export FLASK_ENV=development
 flask run --host 0.0.0.0 --port 5000
 ```
@@ -168,3 +167,19 @@ Summary: Phase 1 (data collection) declared complete. Exit criteria met: 50 raw 
 Files: docs/implementation_notes.md, README.md
 Status: done
 Notes: draft_labels.csv's other 30 rows remain unreviewed scratch data, not required for Phase 1 exit. Next: Phase 2 — backend implementation (/api/analyze, /api/alerts, real LLM service call, DB wiring).
+
+Date: 2026-07-28
+Author: Saad / Claude
+Area: backend
+Summary: Phase 2 (backend) declared complete. /api/analyze, /api/alerts (list/detail/delete) working end-to-end: regex preprocessing -> LangChain LLM call (Gemini/Grok/Ollama provider registry) -> alert engine reconciliation -> SQLite persistence -> JSON response. 18 passing tests, live-verified against a real Gemini call.
+Files: backend/app.py, backend/db.py, backend/alert_engine.py, backend/services/llm_service.py, backend/schemas.py, backend/tests/*, requirements.txt, .env.example, docs/architecture.md, docs/implementation_notes.md, docs/CHANGELOG.md, docs/status_update.md
+Status: done
+Notes: Grok and Ollama providers are implemented on the same pattern as Gemini but untested against a real key/local instance. Rate limiting on /api/analyze deliberately deferred as a stretch item. FastAPI migration, LangGraph, git wiki, and deployment tooling remain explicitly out of scope. Next: Phase 3 — frontend (Analyze page, alerts list/filter, alert detail/export), or Phase 4 formal evaluation could start now against the existing API.
+
+Date: 2026-07-29
+Author: Saad / Claude
+Area: frontend | backend
+Summary: Phase 3 (frontend) declared complete. Three routed pages (Analyze, Alerts List, Alert Detail) via react-router-dom, Context+useReducer state, honest Gemini/Grok/Ollama provider selector, CSV/JSON export, dark SOC-dashboard theme. Backend got a small provider-threading addition and CORS support (flask-cors) to make this work. 20 backend tests passing; frontend verified via successful build + clean dev-server module transforms + live API flow with real CORS headers -- not yet verified in an actual browser.
+Files: frontend/src/**, frontend/tailwind.config.cjs, frontend/postcss.config.cjs, frontend/.env.example, backend/app.py, backend/schemas.py, requirements.txt, .env.example, backend/tests/test_api_analyze.py, docs/architecture.md, docs/implementation_notes.md, docs/CHANGELOG.md, docs/status_update.md
+Status: done
+Notes: Caught and fixed a real Phase-0-era bug: postcss.config.cjs never existed, so Tailwind was never actually processing any CSS. A human should still click through the running app in a real browser before treating Phase 3 as fully signed off. Next: Phase 4 -- formal evaluation against the 20-doc labels.csv set.

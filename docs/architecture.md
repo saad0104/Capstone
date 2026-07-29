@@ -10,15 +10,17 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                           User Interface                         │
-│                     (React + Tailwind Dashboard)                │
+│              User Interface (React + Tailwind, dark theme)       │
+│              react-router-dom routes, Context+useReducer state   │
 │                                                                  │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   Analyze    │  │  Alerts Log  │  │  Alert View  │          │
-│  │    Page      │  │   & Filter   │  │  & Export    │          │
+│  │  "/" Analyze │  │ "/alerts"    │  │"/alerts/:id" │          │
+│  │  + provider  │  │ Log & Filter │  │ Detail       │          │
+│  │  selector    │  │ + CSV export │  │ + JSON export│          │
 │  └──────────────┘  └──────────────┘  └──────────────┘          │
 └────────────────────────────┬──────────────────────────────────┘
-                             │ HTTP / REST API
+                             │ HTTP / REST API (CORS via flask-cors,
+                             │ CORS_ORIGINS env var)
 ┌────────────────────────────▼──────────────────────────────────┐
 │                    Backend (Flask API Server)                  │
 │                                                                 │
@@ -30,26 +32,31 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 │  │  └─────────────────────────────────────────────────────┘│  │
 │  │                         ▼                                │  │
 │  │  ┌─────────────────────────────────────────────────────┐│  │
-│  │  │ 2. Text Preprocessing (spaCy + Regex)              ││  │
-│  │  │    - Remove HTML, normalize whitespace              ││  │
-│  │  │    - Tokenization, sentence splitting               ││  │
+│  │  │ 2. Text Preprocessing (Regex)                      ││  │
+│  │  │    - Normalize whitespace (clean_text)               ││  │
 │  │  │    - Extract IoCs: IPs, CVEs, domains, hashes       ││  │
+│  │  │    - nltk installed, staged for future use, not     ││  │
+│  │  │      yet wired into any pipeline step               ││  │
 │  │  └─────────────────────────────────────────────────────┘│  │
 │  │                         ▼                                │  │
 │  │  ┌─────────────────────────────────────────────────────┐│  │
-│  │  │ 3. LLM Service (OpenAI / Google Gemini API)         ││  │
-│  │  │    - Apply prompt template (structured output)      ││  │
-│  │  │    - Retry logic + exponential backoff              ││  │
-│  │  │    - Response caching (prevent duplicate calls)     ││  │
-│  │  │    - Return: {summary, threat_type, severity, ..}  ││  │
+│  │  │ 3. LLM Service (LangChain provider registry)        ││  │
+│  │  │    - prompt | chat_model | PydanticOutputParser      ││  │
+│  │  │    - 2-shot structured-JSON prompt                   ││  │
+│  │  │    - One active provider via LLM_PROVIDER env var:  ││  │
+│  │  │      Gemini / Grok (xAI) / local Ollama              ││  │
+│  │  │    - Return: {summary, threat_type, severity,       ││  │
+│  │  │      recommended_action}                             ││  │
+│  │  │    - No retry/backoff or response caching yet        ││  │
 │  │  └─────────────────────────────────────────────────────┘│  │
 │  │                         ▼                                │  │
 │  │  ┌─────────────────────────────────────────────────────┐│  │
-│  │  │ 4. Alert Engine (Validation & Enrichment)           ││  │
-│  │  │    - Validate JSON structure                        ││  │
-│  │  │    - Cross-check severity with keyword signals      ││  │
-│  │  │    - Add metadata: UUID, timestamp, processing_ms   ││  │
-│  │  │    - Apply confidence scoring                       ││  │
+│  │  │ 4. Alert Engine (backend/alert_engine.py)           ││  │
+│  │  │    - Dedupe/validate regex-extracted IoCs            ││  │
+│  │  │    - Cross-check severity with keyword signals       ││  │
+│  │  │      (upgrade-only, never downgrades the LLM call)   ││  │
+│  │  │    - Add metadata: UUID, timestamp, processing_ms    ││  │
+│  │  │    - No numeric confidence score yet                 ││  │
 │  │  └─────────────────────────────────────────────────────┘│  │
 │  │                         ▼                                │  │
 │  │  ┌─────────────────────────────────────────────────────┐│  │
@@ -96,14 +103,14 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 
 ## Data Flow
 
-1. **User inputs raw threat text** → dashboard textarea or file upload
+1. **User inputs raw threat text** → Analyze page textarea, with an optional per-request provider selection (Gemini/Grok/Ollama)
 2. **API receives request** → `/api/analyze` endpoint validates and processes
 3. **Preprocessing stage** → normalizes text, extracts IoCs with regex
-4. **LLM call** → sends structured prompt to external API (Gemini/GPT)
+4. **LLM call** → sends structured prompt via LangChain to the selected or default provider
 5. **Alert enrichment** → validates output, applies severity rules, adds metadata
 6. **Persistence** → stores complete alert in SQLite database
-7. **Response** → returns structured JSON to frontend
-8. **Display** → dashboard renders alert with badges, IoC list, export options
+7. **Response** → returns structured JSON to frontend, added to the Alerts Context so the list updates without a refetch
+8. **Display** → dashboard renders alert with severity badge, monospace IoC chips; list view supports threat_type/severity filtering and CSV export; detail view supports JSON export and delete
 
 ---
 
@@ -111,32 +118,39 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 
 | Component            | Technology              | Responsibility                                             |
 | -------------------- | ----------------------- | ---------------------------------------------------------- |
-| **Frontend**         | React + Vite + Tailwind | UI for threat submission, alert viewing, filtering, export |
+| **Frontend**         | React + Vite + Tailwind, react-router-dom | 3 routed pages (Analyze/List/Detail), Context+useReducer state, dark SOC-dashboard theme |
 | **API Server**       | Flask + Werkzeug        | HTTP endpoint routing, request/response handling           |
 | **Input Validation** | Pydantic                | Schema validation, error handling                          |
-| **Preprocessing**    | spaCy + Regex           | Text normalization, IoC extraction                         |
-| **LLM Service**      | OpenAI / Google Gemini  | LLM API client, prompt templating, retry logic             |
-| **Alert Engine**     | Custom Python           | Validation, severity refinement, metadata enrichment       |
+| **Cross-origin access** | flask-cors            | Env-configurable allowed origins (`CORS_ORIGINS`), required since frontend/backend are separate origins in dev and prod |
+| **Preprocessing**    | Regex (nltk staged, unused) | Text normalization, IoC extraction                     |
+| **LLM Service**      | LangChain (Gemini / Grok / Ollama) | Structured-output chain, provider registry       |
+| **Alert Engine**     | Custom Python (`backend/alert_engine.py`) | IoC reconciliation, severity cross-check   |
 | **Database**         | SQLAlchemy + SQLite     | Alert persistence, schema management                       |
 
 ---
 
 ## Key Design Decisions
 
-1. **LLM as a service** — External API (not local model) for cost-effectiveness and accuracy
-2. **Hybrid severity scoring** — Combine LLM output with keyword-based confidence signals
-3. **Structured JSON output** — Force LLM to return deterministic schema (not free-text)
-4. **Rule-based preprocessing** — Fast regex-based IoC extraction before LLM (reduces hallucination)
-5. **Caching** — Avoid redundant API calls for identical inputs
-6. **SQLite for MVP** — Lightweight, no external DB required; can upgrade to PostgreSQL later
+1. **Multi-provider LLM via LangChain, single active provider for MVP** — Gemini, Grok (xAI, reuses the OpenAI-compatible `ChatOpenAI` wrapper), or local Ollama, selected via `LLM_PROVIDER`. Provider-registry pattern makes a future per-request selector a small addition, not a rewrite.
+2. **Hybrid severity scoring** — Combine LLM output with keyword-based signals in `alert_engine.py`; the cross-check can only upgrade severity, never downgrade the LLM's call.
+3. **Structured JSON output** — LangChain `PydanticOutputParser` forces a deterministic schema (not free-text), with 2-shot examples in the prompt.
+4. **Rule-based preprocessing** — Regex-based IoC extraction is the sole, authoritative source of IoCs (reduces hallucination); the LLM is never asked to produce IoCs itself.
+5. **Flask retained over FastAPI** — deliberate choice to keep the existing skeleton rather than migrate for Phase 2; revisit later if needed.
+6. **SQLite for MVP** — Lightweight, no external DB required; can upgrade to PostgreSQL later.
+7. **Real client-side routing (react-router-dom)** — three real routes (`/`, `/alerts`, `/alerts/:id`), not a state-based view switch, so alerts are deep-linkable/shareable.
+8. **Per-request provider selection, surfaced honestly** — the Analyze page lets a user pick Gemini/Grok/Ollama per request (threaded through `AnalyzeRequest.provider` → `LLMService(provider=...)`), but the UI visibly marks Grok/Ollama as "unverified" rather than presenting all three as equally reliable, since only Gemini has been live-verified end-to-end.
+9. **CORS via flask-cors, not a dev-only proxy** — since production hosts the frontend and backend on separate origins (see Deployment Model), CORS is solved once, robustly, via an env-configurable allowlist rather than a Vite dev proxy that wouldn't carry over to prod.
+10. **Both export formats implemented** — CSV for the (filtered) alerts list, JSON for a single alert detail — both generated client-side from data the API already returns, no new backend endpoints needed.
+
+**Not yet implemented** (flagged here so this doc doesn't silently overstate the system): response caching to avoid redundant LLM calls for identical inputs, retry/backoff on provider failures, numeric confidence scoring on alerts, and frontend automated tests (Vitest/React Testing Library) — deferred the same way the backend rate limiter was, as an explicit MVP-scope tradeoff, not an oversight.
 
 ---
 
 ## Deployment Model
 
-- **Backend** — Render / Railway / Heroku (Flask app + SQLite DB)
-- **Frontend** — Vercel / Netlify (static build + React bundle)
-- **LLM API** — Paid service (OpenAI or Google Cloud)
+- **Backend** — Render / Railway / Heroku (Flask app + SQLite DB). Deployed backend's `CORS_ORIGINS` env var must be set to the deployed frontend's actual origin (defaults to `http://localhost:5173` for local dev).
+- **Frontend** — Vercel / Netlify (static build + React bundle). Deployed frontend's `VITE_API_BASE_URL` must point at the deployed backend's actual URL (defaults to `http://localhost:5000` for local dev).
+- **LLM API** — Gemini or Grok (xAI) paid API, or a self-hosted local Ollama instance (no per-call cost)
 - **Infrastructure** — Minimal, cost-effective (no serverless complexity)
 
 ---

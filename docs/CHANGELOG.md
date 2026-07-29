@@ -30,6 +30,63 @@ Format
 - The 50-document starter corpus spans vulnerability, supply-chain, ransomware, malware, phishing, exploit, DDoS, and APT material across five publishers (NVD, CISA, Google TAG, Microsoft, CERT/CC).
 - `data/annotations/draft_labels.csv` (the broader NVD/CISA starter batch) remains unreviewed and is not accepted ground truth.
 
+## 2026-07-29 — Phase 3 frontend implemented (Saad / Claude)
+
+Added:
+
+- `frontend/src/api/client.js` — fetch wrapper with a typed `ApiError` (status/errorCode/details) distinct from plain network failures, and `analyze`/`listAlerts`/`getAlert`/`deleteAlert` functions.
+- `frontend/src/context/AlertsContext.jsx` — Context + `useReducer` alert list/filter state (per the project's own decision #4 in `docs/implementation_notes.md`), with `ADD_ALERT`/`REMOVE_ALERT` actions so Analyze/Detail pages update the list without a refetch.
+- Three routed pages via `react-router-dom`: `AnalyzePage` ("/"), `AlertsListPage` ("/alerts"), `AlertDetailPage` ("/alerts/:id").
+- `ProviderSelector` — Gemini/Grok/Ollama radio selector on the Analyze page, with Grok/Ollama visibly badged "unverified" rather than presented as equally reliable to Gemini.
+- `ErrorPanel` — one shared component rendering distinct messaging for 400 (invalid input), 502 (LLM/provider failure), 404 (not found), and plain network failure.
+- CSV export of the filtered alerts list (`utils/csvExport.js`) and JSON export of a single alert (`utils/jsonExport.js`), both client-side, no new backend endpoints.
+- Dark SOC-dashboard theme: `tailwind.config.cjs` extended with `severity-*` and `surface-*` color tokens and a monospace font stack for IoCs/technical values; `darkMode: "class"` with `class="dark"` on `<html>`.
+- `frontend/.env.example` (`VITE_API_BASE_URL`).
+- Backend: `AnalyzeRequest.provider: Optional[str]`, threaded through `app.py`'s `analyze()` into `LLMService(provider=...)` when supplied; unknown provider name now correctly returns 400, not 502.
+- Backend: CORS via `flask-cors`, allowed origins from a new `CORS_ORIGINS` env var (default `http://localhost:5173`), read inside `create_app()` so tests/different deploys each get their own config.
+- 2 new backend tests covering the explicit-provider path and unknown-provider 400 (20 total, all passing).
+
+Fixed:
+
+- `postcss.config.cjs` never existed in the repo, even though `tailwindcss`/`autoprefixer` were installed since Phase 0 — Tailwind was never actually running, and `@tailwind`/`@apply` directives were being shipped to the browser as literal unprocessed text. Caught by inspecting the built CSS output size/content directly rather than trusting a successful `vite build` exit code.
+
+Notes:
+
+- Verified: production build succeeds; every new module transforms cleanly through the Vite dev server (no syntax/import errors); full `/api/analyze` → `/api/alerts` list → detail → delete flow confirmed against the live backend with real `Origin` headers proving CORS actually works.
+- **Not verified: an actual browser click-through.** No browser automation tool was available this session — layout, interactivity, and visual correctness of the theme still need a human pass before Phase 3 is fully signed off.
+- Frontend automated tests (Vitest/React Testing Library) deliberately deferred, same MVP-scope tradeoff already applied to the backend rate limiter.
+
+## 2026-07-28 — Phase 2 backend implemented (Saad / Claude)
+
+Added:
+
+- `POST /api/analyze`, `GET /api/alerts`, `GET /api/alerts/<id>`, `DELETE /api/alerts/<id>` on `backend/app.py`, alongside the existing `/health`.
+- `backend/db.py` — SQLAlchemy engine/scoped-session setup against `DATABASE_URL`, robust absolute-path SQLite fallback.
+- `backend/alert_engine.py` — the "Alert Engine" step from `docs/architecture.md`: regex IoC dedup/validation, and a keyword-based severity cross-check that can only upgrade the LLM's severity call, never downgrade it.
+- `backend/services/llm_service.py` rewritten around LangChain (`prompt | chat_model | PydanticOutputParser`, 2-shot structured-JSON prompt) with a provider registry supporting Gemini, Grok (xAI, via the OpenAI-compatible `ChatOpenAI` wrapper), and local Ollama, selected via `LLM_PROVIDER`.
+- `backend/tests/` — 18 pytest tests (preprocess regression, alert engine, `/api/analyze`, `/api/alerts`), LLM mocked so no live API key is needed to run them.
+- `backend/__init__.py`, `backend/services/__init__.py`, `backend/tests/__init__.py` — `backend` is now a proper Python package (needed for relative imports and `from backend.app import create_app`-style test imports).
+
+Changed:
+
+- `backend/schemas.py` — `AlertOut` fields given explicit `None` defaults and `created_at` added (required under Pydantic v2 semantics, which don't default `Optional` fields to `None` the way v1 did); `AnalyzeRequest.text` gets a blank-input validator.
+- `requirements.txt` — removed `spacy` (confirmed unused since Phase 0), added `langchain`, `langchain-core`, `langchain-openai`, `langchain-google-genai`, `langchain-ollama`, `nltk`.
+- `.env.example` — replaced `OPENAI_API_KEY` with `LLM_PROVIDER`, `GEMINI_API_KEY`/`GEMINI_MODEL`, `XAI_API_KEY`/`XAI_MODEL`/`XAI_BASE_URL`, `OLLAMA_BASE_URL`/`OLLAMA_MODEL`.
+- `README.md` Quick Start — backend now runs as `flask --app backend.app:create_app run` from the repo root, not `cd backend; flask run`, since `backend` is a package with relative imports now.
+
+Fixed:
+
+- `_serialize()` in `app.py` originally called `AlertOut.model_validate()` directly on the ORM object before flattening `ioc_list` from its stored dict shape to the API's `List[str]` contract — Pydantic validated the raw dict against `List[str]` and crashed before the flattening code ever ran. Fixed by building the flattened dict first, then constructing `AlertOut` from it.
+- Blank-input requests returned 500 instead of 400 — Pydantic's `ValidationError.errors()` included a non-JSON-serializable exception object in `ctx` for the custom blank-text validator. Fixed with `e.errors(include_url=False, include_context=False)`.
+- Default Gemini model name (`gemini-1.5-flash`) had been retired by the provider; corrected to `gemini-2.5-flash` after checking `ListModels` against the actual configured API key.
+- A real API key was briefly committed to the working tree in `.env.example` (git-tracked) instead of `.env` (gitignored) by mistake; moved to `.env` and cleared from `.env.example` before any commit — confirmed via `git log --all -p` that it never entered git history.
+
+Notes:
+
+- Grok and Ollama providers are implemented on the same registry pattern as Gemini but have not been tested against a real key or local instance.
+- Rate limiting on `/api/analyze` remains a deliberately deferred stretch item (decision logged in `docs/implementation_notes.md`), not implemented.
+- `docs/architecture.md` and `docs/implementation_notes.md` updated to match what's actually built (LangChain/provider registry instead of the originally documented plain OpenAI/Gemini client; Flask retained over FastAPI; nltk replacing the never-used spaCy dependency).
+
 ## 2026-07-27 — Evaluation label set reviewed and accepted (Saad)
 
 Changed:

@@ -18,6 +18,14 @@ def test_extract_domain():
     assert "evil.example.com" in extract_iocs("beaconing to evil.example.com")["domains"]
 
 
+def test_extract_defanged_ip():
+    assert "162.19.196[.]13" in extract_iocs("C2 server at 162.19.196[.]13 observed")["ips"]
+
+
+def test_extract_defanged_domain():
+    assert "pro-swapper[.]com" in extract_iocs("beaconing to pro-swapper[.]com")["domains"]
+
+
 def test_clean_text_normalizes_whitespace():
     assert clean_text("a\r\n\n  b") == "a b"
 
