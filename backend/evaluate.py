@@ -62,9 +62,12 @@ def _post_with_rate_limit_retry(client, payload, max_retries=2, backoff_s=35):
     return resp, latency_ms
 
 
-def run_main_system(client, rows, raw_dir, provider):
+def run_main_system(client, rows, raw_dir, provider, pace_seconds=0):
     records = []
-    for row in rows:
+    for i, row in enumerate(rows):
+        if pace_seconds and i > 0:
+            time.sleep(pace_seconds)
+
         text = eval_utils.load_document(row["filename"], raw_dir)
         payload = {"text": text}
         if provider:
@@ -93,8 +96,9 @@ def run_main_system(client, rows, raw_dir, provider):
 
         body = resp.get_json()
         predicted_iocs = set(body.get("ioc_list") or [])
+        resolved_provider = provider or os.getenv("LLM_PROVIDER", "gemini")
         cost = eval_utils.estimate_cost_usd(
-            text, json.dumps(body), provider or os.getenv("LLM_PROVIDER", "gemini"), _current_model()
+            text, json.dumps(body), resolved_provider, _current_model(resolved_provider)
         )
 
         records.append(
@@ -122,12 +126,18 @@ def run_main_system(client, rows, raw_dir, provider):
     return records
 
 
-def _current_model():
-    provider = os.getenv("LLM_PROVIDER", "gemini")
+def _current_model(provider=None):
+    """Resolves the model name for the actually-active provider. Must accept
+    an explicit provider (from --provider / a per-call override), not just
+    read LLM_PROVIDER from the environment -- otherwise a CLI override (e.g.
+    --provider openrouter) silently gets the wrong provider's model name."""
+    provider = provider or os.getenv("LLM_PROVIDER", "gemini")
     if provider == "gemini":
         return os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
     if provider == "grok":
         return os.getenv("XAI_MODEL", "grok-2-latest")
+    if provider == "openrouter":
+        return os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
     return os.getenv("OLLAMA_MODEL", "llama3.1")
 
 
@@ -146,15 +156,18 @@ def run_keyword_baseline_all(rows, raw_dir):
     return records
 
 
-def run_zero_shot_baseline_all(rows, raw_dir, provider):
+def run_zero_shot_baseline_all(rows, raw_dir, provider, pace_seconds=0):
     provider = provider or os.getenv("LLM_PROVIDER", "gemini")
     records = []
-    for row in rows:
+    for i, row in enumerate(rows):
+        if pace_seconds and i > 0:
+            time.sleep(pace_seconds)
+
         text = eval_utils.load_document(row["filename"], raw_dir)
         t0 = time.time()
         pred = baselines.run_zero_shot_llm_baseline(text, provider)
         latency_ms = (time.time() - t0) * 1000
-        cost = eval_utils.estimate_cost_usd(text, pred.get("raw_output") or "", provider, _current_model())
+        cost = eval_utils.estimate_cost_usd(text, pred.get("raw_output") or "", provider, _current_model(provider))
         records.append(
             {
                 "filename": row["filename"],
@@ -228,7 +241,11 @@ def compute_main_system_metrics(records):
     y_true_sev = [r["ground_truth"]["severity"] for r in ok_records]
     y_pred_sev = [r["predicted"]["severity"] for r in ok_records]
 
-    latencies = [r["latency_ms"] for r in records]
+    # Only successful requests' timings represent real analyze-pipeline
+    # performance -- a fast 429 rejection isn't "low latency," it's a
+    # different thing entirely, and mixing the two would skew the reported
+    # distribution in a misleading direction.
+    latencies = [r["latency_ms"] for r in ok_records]
     costs = [r["cost_usd_est"] for r in ok_records if r.get("cost_usd_est") is not None]
 
     return {
@@ -267,6 +284,14 @@ def main():
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--skip_baselines", action="store_true")
     parser.add_argument("--skip_baseline2", action="store_true")
+    parser.add_argument(
+        "--pace_seconds",
+        type=float,
+        default=15,
+        help="Seconds to wait between real LLM calls (main system and Baseline 2), to stay "
+        "under free-tier rate limits (e.g. Gemini free tier: 5 requests/minute = 1 per 12s). "
+        "Set to 0 to disable if using a paid tier with higher limits.",
+    )
     args = parser.parse_args()
 
     rows = load_ground_truth(args.test_set)
@@ -279,13 +304,13 @@ def main():
     client = app.test_client()
 
     print(f"Running main system against {len(rows)} document(s)...")
-    main_records = run_main_system(client, rows, args.raw_dir, args.provider)
+    main_records = run_main_system(client, rows, args.raw_dir, args.provider, args.pace_seconds)
     main_metrics = compute_main_system_metrics(main_records)
 
     results = {
         "run_meta": {
             "provider": args.provider or os.getenv("LLM_PROVIDER", "gemini"),
-            "model": _current_model(),
+            "model": _current_model(args.provider),
             "n_docs": len(rows),
             "timestamp": datetime.now(timezone.utc).isoformat(),
         },
@@ -308,7 +333,7 @@ def main():
 
         if not args.skip_baseline2:
             print(f"Running Baseline 2 (zero-shot LLM, {len(rows)} real calls)...")
-            zs_records = run_zero_shot_baseline_all(rows, args.raw_dir, args.provider)
+            zs_records = run_zero_shot_baseline_all(rows, args.raw_dir, args.provider, args.pace_seconds)
             zs_for_metrics = [
                 r
                 for r in zs_records

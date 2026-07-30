@@ -148,10 +148,13 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 
 ## Deployment Model
 
-- **Backend** — Render / Railway / Heroku (Flask app + SQLite DB). Deployed backend's `CORS_ORIGINS` env var must be set to the deployed frontend's actual origin (defaults to `http://localhost:5173` for local dev).
-- **Frontend** — Vercel / Netlify (static build + React bundle). Deployed frontend's `VITE_API_BASE_URL` must point at the deployed backend's actual URL (defaults to `http://localhost:5000` for local dev).
-- **LLM API** — Gemini or Grok (xAI) paid API, or a self-hosted local Ollama instance (no per-call cost)
+- **Backend** — Render (Flask app + gunicorn + SQLite DB), defined by the `render.yaml` Blueprint at the repo root. Deployed backend's `CORS_ORIGINS` env var must be set to the deployed frontend's actual origin (defaults to `http://localhost:5173` for local dev).
+  - **Known limitation**: Render's free-tier filesystem is ephemeral — the SQLite file is wiped on every redeploy, restart, or 15-minute-idle spin-down (see `backend/db.py`'s default `DATABASE_URL` path). Alert data does not persist across these events unless a paid persistent disk is attached, or the app is later migrated to a managed database (e.g. Render Postgres). Not fixed as part of the current deployment setup — documented so it isn't mistaken for a bug.
+  - Free-tier services also spin down after 15 minutes of inactivity and take roughly 30-60 seconds to wake on the next request — the first request after idle time will be slow, not broken.
+- **Frontend** — Netlify (static build + React bundle), defined by the `netlify.toml` at the repo root (base directory `frontend/`, SPA redirect to `index.html` for `react-router-dom`'s client-side routes). Deployed frontend's `VITE_API_BASE_URL` must point at the deployed Render backend's actual URL (defaults to `http://localhost:5000` for local dev).
+- **LLM API** — Gemini, Grok (xAI), or OpenRouter paid API, or a self-hosted local Ollama instance (no per-call cost)
 - **Infrastructure** — Minimal, cost-effective (no serverless complexity)
+- See `docs/deployment.md` for the exact step-by-step deployment runbook.
 
 ---
 

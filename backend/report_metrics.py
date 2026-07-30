@@ -87,6 +87,77 @@ def compute_ratings_stats(ratings_csv_path):
     }
 
 
+_SEVERITY_ORDER = ["Low", "Medium", "High", "Critical"]
+
+
+def _render_findings(results):
+    """Real, data-derived findings surfaced by this evaluation run -- kept
+    separate from the metric tables above because they're about *why* the
+    numbers look the way they do, not the numbers themselves. Deliberately
+    descriptive, not prescriptive: this project's own rule is that findings
+    from the held-out evaluation set do not get used to tune the rules/prompt
+    that produced them (see docs/implementation_notes.md's decision log) --
+    these are reported as future-work items, not silently fixed."""
+    lines = []
+    records = [r for r in results["records"] if r["status"] == "ok"]
+
+    upgrades = 0
+    downgrades = 0
+    for r in records:
+        pred, truth = r["predicted"]["severity"], r["ground_truth"]["severity"]
+        if pred == truth or pred not in _SEVERITY_ORDER or truth not in _SEVERITY_ORDER:
+            continue
+        if _SEVERITY_ORDER.index(pred) > _SEVERITY_ORDER.index(truth):
+            upgrades += 1
+        else:
+            downgrades += 1
+
+    if upgrades or downgrades:
+        lines.append(
+            f"- **Severity mismatches skew upward**: {upgrades} upgraded vs {downgrades} downgraded "
+            f"relative to ground truth (of {upgrades + downgrades} total mismatches). "
+            "`backend/alert_engine.py`'s keyword-based severity cross-check is deliberately "
+            "upgrade-only, so this is the mechanism working as coded — but several keywords "
+            '(e.g. a bare `"ransomware"` or `"critical infrastructure"` mention) are broad enough '
+            "to trigger on documents that shouldn't necessarily escalate to Critical. Not tuned "
+            "based on this result, since it's exactly the held-out set this project keeps off-limits "
+            "for rule tuning — noted here as a future-work item instead."
+        )
+
+    vuln_overpredictions = sum(
+        1
+        for r in records
+        if r["predicted"]["threat_type"] != r["ground_truth"]["threat_type"]
+        and r["predicted"]["threat_type"] == "vulnerability"
+    )
+    total_mismatches = sum(1 for r in records if r["predicted"]["threat_type"] != r["ground_truth"]["threat_type"])
+    if total_mismatches and vuln_overpredictions:
+        lines.append(
+            f"- **threat_type mismatches lean toward \"vulnerability\"**: {vuln_overpredictions} of "
+            f"{total_mismatches} threat_type errors predicted `vulnerability` for a document actually "
+            "labeled something else (e.g. `exploit`, `DDoS`). `backend/services/llm_service.py`'s 2-shot "
+            "prompt only demonstrates `vulnerability` and `ransomware` examples — none of the other 6 "
+            "categories — which may bias a model toward the categories it's seen demonstrated when "
+            "uncertain. Not changed based on this result, for the same held-out-set reason as above."
+        )
+
+    zs = (results.get("baselines") or {}).get("zero_shot_llm")
+    if zs and zs.get("metrics") and zs["metrics"]["threat_type"]["macro"]["f1"] < 0.1:
+        lines.append(
+            "- **Zero-shot LLM baseline scores near-zero on threat_type despite reasonable-sounding "
+            "answers**: with no schema constraint, it returns free-text labels (e.g. "
+            '`"Remote Code Execution (RCE)"`, `"SQL Injection"`) that never exact-match the fixed '
+            "taxonomy ground truth uses. This is a stronger illustration of the value of structured "
+            "output than `docs/evaluation_plan.md`'s own predicted ~70% zero-shot accuracy assumed — "
+            "exact-match scoring genuinely requires a constrained output format, not just a capable model."
+        )
+
+    if not lines:
+        lines.append("- No notable systematic error patterns found in this run.")
+    lines.append("")
+    return lines
+
+
 def render_markdown(results, ratings_stats):
     lines = ["# ThreatGPT Evaluation Results", ""]
     meta = results["run_meta"]
@@ -203,8 +274,21 @@ def render_markdown(results, ratings_stats):
         lines.append(f"| Beat all baselines (threat F1) | — | — | {'Yes' if beat_baselines else 'No'} |")
     lines.append("")
 
+    lines.append("## Findings")
+    lines.append("")
+    lines += _render_findings(results)
+
     lines.append("## Methodology Notes")
     lines.append("")
+    lines.append(
+        f"- This run used provider `{meta['provider']}` (model `{meta['model']}`), **not** the "
+        "app's configured default (Gemini) — Gemini's free tier hit its daily request quota "
+        "(20 requests/day for `gemini-2.5-flash`) during same-day testing prior to this run. "
+        "The latency numbers above reflect this specific free-tier model, not Gemini's; an "
+        "earlier ad-hoc Gemini call in this same session completed in ~3-4 seconds, well under "
+        "this run's mean of {:.1f}s. Re-run with `--provider gemini` once quota resets to get "
+        "latency figures for the actual default provider.".format(m["latency"]["mean_ms"] / 1000 if m["latency"]["mean_ms"] else 0)
+    )
     lines.append(
         "- Input text has `Source:`/`Source URL:` provenance lines stripped before submission, "
         "matching how `data/annotations/labels.csv`'s ground-truth IoCs were built — otherwise "

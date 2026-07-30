@@ -1,0 +1,1679 @@
+{
+  "run_meta": {
+    "provider": "openrouter",
+    "model": "google/gemma-4-26b-a4b-it:free",
+    "n_docs": 20,
+    "timestamp": "2026-07-30T10:04:30.881110+00:00"
+  },
+  "records": [
+    {
+      "filename": "nvd_002_cve_2021_44228.txt",
+      "status": "ok",
+      "alert_id": "97f057af-eb2d-483d-9c77-94f3bc572fde",
+      "predicted": {
+        "threat_type": "vulnerability",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2021-44228"
+        ],
+        "summary": "CVE-2021-44228 is a critical remote code execution vulnerability in Apache Log4j2's JNDI lookup feature. Attackers can execute arbitrary code by injecting malicious LDAP strings into log messages when message lookup substitution is enabled.",
+        "recommended_action": "Update Log4j-core to a patched version and disable JNDI lookups if immediate patching is not possible."
+      },
+      "ground_truth": {
+        "threat_type": "vulnerability",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2021-44228"
+        ]
+      },
+      "latency_ms": 7622.573137283325,
+      "processing_ms": 7608,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "nvd_006_cve_2023_34362.txt",
+      "status": "ok",
+      "alert_id": "46aa7385-39ec-43a7-98ee-7b85b5a8e6e7",
+      "predicted": {
+        "threat_type": "vulnerability",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2023-34362"
+        ],
+        "summary": "CVE-2023-34362 is a critical SQL injection vulnerability in MOVEit Transfer that allows unauthenticated attackers to access, alter, or delete database contents. This vulnerability has been observed being exploited in the wild.",
+        "recommended_action": "Apply the vendor-provided security patches for MOVEit Transfer immediately and audit database logs for unauthorized activity."
+      },
+      "ground_truth": {
+        "threat_type": "vulnerability",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2023-34362"
+        ]
+      },
+      "latency_ms": 5166.614055633545,
+      "processing_ms": 5158,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "nvd_008_cve_2024_1709.txt",
+      "status": "ok",
+      "alert_id": "82dca1c3-f082-401a-baff-9f38bae79288",
+      "predicted": {
+        "threat_type": "vulnerability",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2024-1709"
+        ],
+        "summary": "CVE-2024-1709 is a critical authentication bypass vulnerability in ConnectWise ScreenConnect versions 23.9.7 and prior. An attacker can exploit an alternate path or channel to gain direct access to confidential information or critical systems.",
+        "recommended_action": "Update ConnectWise ScreenConnect to a patched version immediately to prevent unauthorized access."
+      },
+      "ground_truth": {
+        "threat_type": "vulnerability",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2024-1709"
+        ]
+      },
+      "latency_ms": 10837.460994720459,
+      "processing_ms": 10830,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "nvd_010_cve_2024_3094.txt",
+      "status": "ok",
+      "alert_id": "2afdeec9-b4a9-46d7-9523-1923f857bbdf",
+      "predicted": {
+        "threat_type": "supply-chain",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2024-3094"
+        ],
+        "summary": "A malicious backdoor was discovered in upstream xz tarballs starting from version 5.6.0, where obfuscated code modifies liblzma functions. This vulnerability allows for data interception and unauthorized modification in software linked against the compromised library.",
+        "recommended_action": "Downgrade xz utils to a known safe version and audit systems for unauthorized access or data exfiltration."
+      },
+      "ground_truth": {
+        "threat_type": "supply-chain",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2024-3094"
+        ]
+      },
+      "latency_ms": 2030.9498310089111,
+      "processing_ms": 2023,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cisa_025_solarwinds_supply_chain.txt",
+      "status": "ok",
+      "alert_id": "173a3c4e-edf7-4e65-b436-91d70762bf20",
+      "predicted": {
+        "threat_type": "supply-chain",
+        "severity": "Critical",
+        "iocs": [],
+        "summary": "CISA issued an advisory regarding the SolarWinds Orion supply-chain compromise affecting government, critical infrastructure, and private sector organizations. The attack involves a sophisticated compromise of the software build process to distribute malicious updates.",
+        "recommended_action": "Follow CISA's detection, containment, and remediation guidance to secure affected environments."
+      },
+      "ground_truth": {
+        "threat_type": "supply-chain",
+        "severity": "Critical",
+        "iocs": []
+      },
+      "latency_ms": 8434.17739868164,
+      "processing_ms": 8427,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cisa_013_papercut_exploitation.txt",
+      "status": "ok",
+      "alert_id": "3ca27775-a121-40be-a234-b208e17b4cf1",
+      "predicted": {
+        "threat_type": "vulnerability",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2023-27350"
+        ],
+        "summary": "Malicious actors are actively exploiting CVE-2023-27350 in PaperCut MF and NG to bypass authentication and achieve remote code execution. This unauthenticated vulnerability allows attackers to execute malicious code on affected systems.",
+        "recommended_action": "Immediately patch PaperCut MF and NG, hunt for signs of compromise on unpatched systems, and implement CISA's detection guidance."
+      },
+      "ground_truth": {
+        "threat_type": "exploit",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2023-27350"
+        ]
+      },
+      "latency_ms": 33837.17370033264,
+      "processing_ms": 33829,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "google_005_zero_day_campaigns.txt",
+      "status": "ok",
+      "alert_id": "19e1d85d-9917-4ed7-97a8-9f8e0f45e781",
+      "predicted": {
+        "threat_type": "vulnerability",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2021-1879",
+          "CVE-2021-21166",
+          "CVE-2021-30551",
+          "CVE-2021-33742"
+        ],
+        "summary": "Google TAG identified four in-the-wild zero-day campaigns targeting Chrome, Internet Explorer, and WebKit. These campaigns exploited specific vulnerabilities including CVE-2021-21166, CVE-2021-30551, CVE-2021-33742, and CVE-2021-1879.",
+        "recommended_action": "Update web browsers including Chrome, Internet Explorer, and WebKit-based applications to the latest available versions."
+      },
+      "ground_truth": {
+        "threat_type": "exploit",
+        "severity": "Critical",
+        "iocs": [
+          "CVE-2021-1879",
+          "CVE-2021-21166",
+          "CVE-2021-30551",
+          "CVE-2021-33742"
+        ]
+      },
+      "latency_ms": 20349.552869796753,
+      "processing_ms": 20338,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cert_001_pandasai_prompt_injection.txt",
+      "status": "ok",
+      "alert_id": "b0b3db5e-405c-464a-9b0c-4044118d3ace",
+      "predicted": {
+        "threat_type": "vulnerability",
+        "severity": "High",
+        "iocs": [
+          "CVE-2024-12366"
+        ],
+        "summary": "PandasAI versions 2.4.3 and earlier are vulnerable to prompt injection, allowing attackers to execute arbitrary Python code via the chat interface. This vulnerability, tracked as CVE-2024-12366, can lead to full process compromise or unauthorized access to connected services.",
+        "recommended_action": "Update PandasAI to a version that mitigates CVE-2024-12366 and implement strict input validation for chat interfaces."
+      },
+      "ground_truth": {
+        "threat_type": "exploit",
+        "severity": "High",
+        "iocs": [
+          "CVE-2024-12366"
+        ]
+      },
+      "latency_ms": 23221.179485321045,
+      "processing_ms": 23214,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cisa_005_androxgh0st.txt",
+      "status": "ok",
+      "alert_id": "3e592b7d-370e-46d8-bad4-c44babb634e0",
+      "predicted": {
+        "threat_type": "malware",
+        "severity": "High",
+        "iocs": [],
+        "summary": "CISA and the FBI have identified indicators of compromise for the Androxgh0st malware, which is used to build botnets that target vulnerable networks. The malware facilitates network compromise through the exploitation of known vulnerabilities and insecure credential storage.",
+        "recommended_action": "Patch known exploited vulnerabilities, minimize internet exposure, and secure credentials stored in.env files."
+      },
+      "ground_truth": {
+        "threat_type": "malware",
+        "severity": "High",
+        "iocs": []
+      },
+      "latency_ms": 3228.785276412964,
+      "processing_ms": 3222,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cisa_016_snake_malware.txt",
+      "status": "ok",
+      "alert_id": "590f63a8-dfc7-4cd9-87b5-7ebfe99dcc26",
+      "predicted": {
+        "threat_type": "malware",
+        "severity": "High",
+        "iocs": [],
+        "summary": "CISA and partners have released guidance to assist organizations in identifying and removing Snake malware. This malware is linked to Russian intelligence activity and requires specific detection and remediation steps to secure potentially compromised networks.",
+        "recommended_action": "Follow the detection and remediation guidance provided in the CISA advisory to investigate and secure networks."
+      },
+      "ground_truth": {
+        "threat_type": "malware",
+        "severity": "High",
+        "iocs": []
+      },
+      "latency_ms": 3933.014154434204,
+      "processing_ms": 3926,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cisa_017_emotet.txt",
+      "status": "ok",
+      "alert_id": "f86381d3-5233-411c-b6ee-ca43793c0b67",
+      "predicted": {
+        "threat_type": "malware",
+        "severity": "High",
+        "iocs": [],
+        "summary": "Emotet is an evolving malware threat that spreads via malicious emails to facilitate further system compromise. CISA and MS-ISAC have issued an advisory detailing its tactics and defensive measures.",
+        "recommended_action": "Implement defensive actions outlined in the CISA advisory and monitor for malicious email activity."
+      },
+      "ground_truth": {
+        "threat_type": "malware",
+        "severity": "High",
+        "iocs": []
+      },
+      "latency_ms": 12281.284809112549,
+      "processing_ms": 12274,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cisa_003_akira_ransomware.txt",
+      "status": "ok",
+      "alert_id": "fb75904c-c1b9-4ed3-ac16-5f3c143deecc",
+      "predicted": {
+        "threat_type": "ransomware",
+        "severity": "Critical",
+        "iocs": [],
+        "summary": "CISA and partner agencies have issued an advisory regarding Akira ransomware activity, detailing its specific tradecraft and indicators. The report aims to help defenders implement defensive measures to mitigate the risk of an incident.",
+        "recommended_action": "Implement the defensive measures and mitigation guidance provided in the CISA advisory."
+      },
+      "ground_truth": {
+        "threat_type": "ransomware",
+        "severity": "High",
+        "iocs": []
+      },
+      "latency_ms": 12413.278341293335,
+      "processing_ms": 12406,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "microsoft_005_human_operated_ransomware.txt",
+      "status": "ok",
+      "alert_id": "32ad5bf8-c65c-45a2-8e6a-8c467248cfbb",
+      "predicted": {
+        "threat_type": "ransomware",
+        "severity": "Critical",
+        "iocs": [],
+        "summary": "Microsoft identifies human-operated ransomware as a multi-stage attack sequence involving malicious files, processes, and behaviors. The report focuses on improving AI-based detection signals to disrupt these activities before deployment and extortion occur.",
+        "recommended_action": "Implement AI-driven detection mechanisms to monitor for anomalous file and process behaviors during the attack lifecycle."
+      },
+      "ground_truth": {
+        "threat_type": "ransomware",
+        "severity": "High",
+        "iocs": []
+      },
+      "latency_ms": 14560.297727584839,
+      "processing_ms": 14554,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cert_002_http2_dos.txt",
+      "status": "ok",
+      "alert_id": "31fb0cae-fa63-4712-9ba4-0b68d50dbf90",
+      "predicted": {
+        "threat_type": "vulnerability",
+        "severity": "High",
+        "iocs": [
+          "CVE-2026-44909",
+          "CVE-2026-59173",
+          "CVE-2026-59762"
+        ],
+        "summary": "A denial-of-service vulnerability exists in several HTTP/2 server implementations where stalled flow-control conditions lead to excessive buffering. Remote unauthenticated attackers can exploit this by opening multiple simultaneous streams to cause memory exhaustion or service interruption.",
+        "recommended_action": "Patch HTTP/2 server implementations and monitor for unusual stream patterns or memory exhaustion symptoms."
+      },
+      "ground_truth": {
+        "threat_type": "DDoS",
+        "severity": "High",
+        "iocs": [
+          "CVE-2026-44909",
+          "CVE-2026-59173",
+          "CVE-2026-59762"
+        ]
+      },
+      "latency_ms": 7287.4205112457275,
+      "processing_ms": 7279,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cert_004_tcp_dos.txt",
+      "status": "ok",
+      "alert_id": "9f871d57-9569-4f9a-8bbb-81cc581072a5",
+      "predicted": {
+        "threat_type": "DDoS",
+        "severity": "High",
+        "iocs": [
+          "CVE-2018-5390",
+          "CVE-2018-6922"
+        ],
+        "summary": "Vulnerabilities in Linux and FreeBSD TCP implementations allow attackers to trigger denial-of-service conditions using specially modified packets. These flaws, identified as CVE-2018-5390 and CVE-2018-6922, can degrade or interrupt network services during established sessions.",
+        "recommended_action": "Apply security patches for Linux and FreeBSD TCP stacks to mitigate the risk of denial-of-service attacks."
+      },
+      "ground_truth": {
+        "threat_type": "DDoS",
+        "severity": "Medium",
+        "iocs": [
+          "CVE-2018-5390",
+          "CVE-2018-6922"
+        ]
+      },
+      "latency_ms": 11778.621912002563,
+      "processing_ms": 11773,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cisa_007_volt_typhoon.txt",
+      "status": "ok",
+      "alert_id": "e78fe235-38b7-4f91-a937-4e13b9cba850",
+      "predicted": {
+        "threat_type": "APT",
+        "severity": "Critical",
+        "iocs": [],
+        "summary": "PRC state-sponsored actor Volt Typhoon has compromised U.S. critical infrastructure using living-off-the-land techniques to maintain persistent access. The activity focuses on stealthy persistence within sensitive networks.",
+        "recommended_action": "Implement detection and mitigation guidance for living-off-the-land techniques and monitor for unauthorized network persistence."
+      },
+      "ground_truth": {
+        "threat_type": "APT",
+        "severity": "Critical",
+        "iocs": []
+      },
+      "latency_ms": 16197.209119796753,
+      "processing_ms": 16191,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "cisa_010_russian_military.txt",
+      "status": "ok",
+      "alert_id": "b93a905c-bbd8-4df4-9203-43a262618a87",
+      "predicted": {
+        "threat_type": "APT",
+        "severity": "Critical",
+        "iocs": [],
+        "summary": "Russian military cyber actors are actively targeting critical infrastructure organizations both in the United States and globally. The advisory provides specific tactics and defensive recommendations to assist organizations in detecting and mitigating these state-sponsored activities.",
+        "recommended_action": "Implement the defensive recommendations provided in the CISA advisory and monitor for observed actor tactics."
+      },
+      "ground_truth": {
+        "threat_type": "APT",
+        "severity": "Critical",
+        "iocs": []
+      },
+      "latency_ms": 6713.554859161377,
+      "processing_ms": 6705,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "google_001_youtube_cookie_theft.txt",
+      "status": "ok",
+      "alert_id": "9f50a34b-db10-4cdb-bd09-b9e8884de740",
+      "predicted": {
+        "threat_type": "phishing",
+        "severity": "High",
+        "iocs": [
+          "04deb8d8aee87b24c7ba0db55610bb12f7d8ec1e75765650e5b2b4f933b18f6d",
+          "0d8cfa02515d504ca34273d8cfbe9d1d0f223e5d2cece00533c48a990fd8ce72",
+          "501fe2509581d43288664f0d2825a6a47102cd614f676bf39f0f80ab2fd43f2c",
+          "6235573d8d178341dbfbead7c18a2f419808dc8c7c302ac61e4f9645d024ed85",
+          "6359d5fa7437164b300abc69c8366f9481cb91b7558d68c9e3b0c2a535ddc243",
+          "85066962ba1e8a0a8d6989fffe38ff564a6cf6f8a07782b3fbc0dcb19d2497cb",
+          "8cafd480ac2a6018a4e716a4f9fd1254c4e93501a84ee1731ed7b98b67ab15dd",
+          "9afc029ac5aa525e6fdcedf1e93a64980751eeeae3cf073fcbd1d223ab5c96d6",
+          "Db45bb99c44a96118bc5673a7ad65dc2a451ea70d4066715006107f65d906715",
+          "Edea528804e505d202351eda0c186d7c200c854c41049d7b06d1971591142358",
+          "F59534e6d9e0559d99d2b3a630672a514dbd105b0d6fc9447d573ebd0053caba",
+          "anypon[.]online",
+          "awaken1337[.]xyz",
+          "bragi-studio[.]com",
+          "c7c8466a66187f78d953c64cbbd2be916328085aa3c5e48fde6767bc9890516b",
+          "c8b42437ffd8cfbbe568013eaaa707c212a2628232c01d809a3cf864fe24afa8",
+          "dizzify[.]me",
+          "downloadnature[.]com",
+          "downloadnature[.]space",
+          "ed8b2af133b4144bef2b89dbec1526bf80cc06fe053ece1fa873f6bd1e99f0be",
+          "efc88a933a8baa6e7521c8d0cf78c52b0e3feb22985de3d35316a8b00c5073b3",
+          "fast-redirect[.]host",
+          "fenzor[.]com",
+          "peoplep[.]site",
+          "pixelka[.]fun",
+          "playerupbo[.]xyz",
+          "plplme[.]site",
+          "pro-swapper[.]com",
+          "rainway-gaming[.]com",
+          "roudar[.]com",
+          "spaceditor[.]space",
+          "universe-photo[.]com",
+          "user52406.majorcore[.]space",
+          "voneditor[.]tech",
+          "vontex[.]tech",
+          "vortex-cloudgaming[.]com",
+          "yourworld[.]site",
+          "zeneditor[.]tech"
+        ],
+        "summary": "Financially motivated phishing campaigns are targeting YouTube creators using fake collaboration offers to deliver cookie-stealing malware. These attacks utilize various malware families like RedLine and Vidar to hijack channels for unauthorized use or sale.",
+        "recommended_action": "Educate creators on identifying fake collaboration offers and implement multi-factor authentication while monitoring for unauthorized session cookie usage."
+      },
+      "ground_truth": {
+        "threat_type": "phishing",
+        "severity": "High",
+        "iocs": [
+          "04deb8d8aee87b24c7ba0db55610bb12f7d8ec1e75765650e5b2b4f933b18f6d",
+          "0d8cfa02515d504ca34273d8cfbe9d1d0f223e5d2cece00533c48a990fd8ce72",
+          "501fe2509581d43288664f0d2825a6a47102cd614f676bf39f0f80ab2fd43f2c",
+          "6235573d8d178341dbfbead7c18a2f419808dc8c7c302ac61e4f9645d024ed85",
+          "6359d5fa7437164b300abc69c8366f9481cb91b7558d68c9e3b0c2a535ddc243",
+          "85066962ba1e8a0a8d6989fffe38ff564a6cf6f8a07782b3fbc0dcb19d2497cb",
+          "8cafd480ac2a6018a4e716a4f9fd1254c4e93501a84ee1731ed7b98b67ab15dd",
+          "9afc029ac5aa525e6fdcedf1e93a64980751eeeae3cf073fcbd1d223ab5c96d6",
+          "Db45bb99c44a96118bc5673a7ad65dc2a451ea70d4066715006107f65d906715",
+          "Edea528804e505d202351eda0c186d7c200c854c41049d7b06d1971591142358",
+          "F59534e6d9e0559d99d2b3a630672a514dbd105b0d6fc9447d573ebd0053caba",
+          "anypon[.]online",
+          "awaken1337[.]xyz",
+          "bragi-studio[.]com",
+          "c7c8466a66187f78d953c64cbbd2be916328085aa3c5e48fde6767bc9890516b",
+          "c8b42437ffd8cfbbe568013eaaa707c212a2628232c01d809a3cf864fe24afa8",
+          "dizzify[.]me",
+          "downloadnature[.]com",
+          "downloadnature[.]space",
+          "ed8b2af133b4144bef2b89dbec1526bf80cc06fe053ece1fa873f6bd1e99f0be",
+          "efc88a933a8baa6e7521c8d0cf78c52b0e3feb22985de3d35316a8b00c5073b3",
+          "fast-redirect[.]host",
+          "fenzor[.]com",
+          "peoplep[.]site",
+          "pixelka[.]fun",
+          "playerupbo[.]xyz",
+          "plplme[.]site",
+          "pro-swapper[.]com",
+          "rainway-gaming[.]com",
+          "roudar[.]com",
+          "spaceditor[.]space",
+          "universe-photo[.]com",
+          "user52406.majorcore[.]space",
+          "voneditor[.]tech",
+          "vontex[.]tech",
+          "vortex-cloudgaming[.]com",
+          "yourworld[.]site",
+          "zeneditor[.]tech"
+        ]
+      },
+      "latency_ms": 9050.258159637451,
+      "processing_ms": 9040,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "google_002_apt42_phishing.txt",
+      "status": "ok",
+      "alert_id": "e3dd3e00-bc20-455d-8183-0fe7ce51ca3d",
+      "predicted": {
+        "threat_type": "phishing",
+        "severity": "High",
+        "iocs": [
+          "0180f4f29c550aa1ffaa21af51711b29de99fb1d7c932d008a0e9356ae8a7d60",
+          "33a61ff123713da26f45b399a9828e29ad25fbda7e8994c954d714375ef92156",
+          "49.13.194[.]118",
+          "4ac088bf25d153ec2b9402377695b15a28019dc8087d98bd34e10fed3424125f",
+          "82ae2eb470a5a16ca39ec84b387294eaa3ae82e5ada4b252470c1281e1f31c0a",
+          "89c1d1b61d7f863f8a651726e29f2ae3de7958f36b49a756069021817947d06c",
+          "91.107.150[.]184",
+          "accredit-navigation[.]online",
+          "baac058ddfc96c8aea8c0057077505f0ad3ff20311d999886fed549924404849",
+          "bc2597ce09987022ff0498c6710a9b51a1a47ed8082ac044be2838b384157527",
+          "brookings[.]email",
+          "c3486133783379e13ed37c45dc6645cbee4c1c6e62e7988722931eef99c8eaf3",
+          "c67cd544a112cab1bb75b3c44df4caf2045ef0af51de9ece11261d6c504add32",
+          "check-pabnel-status[.]live",
+          "checking-paneling[.]live",
+          "click-choose-figured[.]cfd",
+          "f83e2b3be2e6db20806a4b9b216edc7508fa81ce60bf59436d53d3ae435b6060",
+          "firebasestorage.googleapis[.]com",
+          "meetroomonlin1925.w3spaces[.]com",
+          "n9[.]cl",
+          "panel-short-check[.]live",
+          "s3api[.]shop",
+          "sharedrive.webredirect[.]org",
+          "short-ion-per[.]live",
+          "smaaaal[.]cfd",
+          "understandingthewar[.]org",
+          "visioneditor.loseyourip[.]com"
+        ],
+        "summary": "Iranian-backed APT42 is conducting targeted credential-phishing campaigns against high-profile users in Israel and the United States. The group utilizes malicious redirects, phishing kits, and abused cloud services to target government, diplomatic, and academic sectors.",
+        "recommended_action": "Implement multi-factor authentication (MFA), monitor for unauthorized cloud service usage, and block identified malicious domains and IP addresses."
+      },
+      "ground_truth": {
+        "threat_type": "phishing",
+        "severity": "High",
+        "iocs": [
+          "0180f4f29c550aa1ffaa21af51711b29de99fb1d7c932d008a0e9356ae8a7d60",
+          "33a61ff123713da26f45b399a9828e29ad25fbda7e8994c954d714375ef92156",
+          "49.13.194[.]118",
+          "4ac088bf25d153ec2b9402377695b15a28019dc8087d98bd34e10fed3424125f",
+          "82ae2eb470a5a16ca39ec84b387294eaa3ae82e5ada4b252470c1281e1f31c0a",
+          "89c1d1b61d7f863f8a651726e29f2ae3de7958f36b49a756069021817947d06c",
+          "91.107.150[.]184",
+          "accredit-navigation[.]online",
+          "baac058ddfc96c8aea8c0057077505f0ad3ff20311d999886fed549924404849",
+          "bc2597ce09987022ff0498c6710a9b51a1a47ed8082ac044be2838b384157527",
+          "brookings[.]email",
+          "c3486133783379e13ed37c45dc6645cbee4c1c6e62e7988722931eef99c8eaf3",
+          "c67cd544a112cab1bb75b3c44df4caf2045ef0af51de9ece11261d6c504add32",
+          "check-pabnel-status[.]live",
+          "checking-paneling[.]live",
+          "click-choose-figured[.]cfd",
+          "f83e2b3be2e6db20806a4b9b216edc7508fa81ce60bf59436d53d3ae435b6060",
+          "firebasestorage.googleapis[.]com",
+          "meetroomonlin1925.w3spaces[.]com",
+          "n9[.]cl",
+          "panel-short-check[.]live",
+          "s3api[.]shop",
+          "sharedrive.webredirect[.]org",
+          "short-ion-per[.]live",
+          "smaaaal[.]cfd",
+          "understandingthewar[.]org",
+          "visioneditor.loseyourip[.]com"
+        ]
+      },
+      "latency_ms": 12092.82398223877,
+      "processing_ms": 12084,
+      "cost_usd_est": null
+    },
+    {
+      "filename": "microsoft_001_spoofed_domains.txt",
+      "status": "ok",
+      "alert_id": "96728843-a634-42c6-b871-ae36430f5c8c",
+      "predicted": {
+        "threat_type": "phishing",
+        "severity": "High",
+        "iocs": [
+          "162.19.196[.]13",
+          "163.5.221[.]110",
+          "2fa.valoufroo.in[.]net",
+          "51.195.94[.]194",
+          "51.89.59[.]188",
+          "absoluteprintgroup[.]com",
+          "goorooyi.yoshemo.in[.]net",
+          "integralsm[.]cl",
+          "online.amphen0l-fci[.]com",
+          "scanuae[.]com",
+          "valoufroo.in[.]net"
+        ],
+        "summary": "Phishing actors, specifically Storm-1747, are using complex mail-routing and misconfigured protections to spoof internal domains. These campaigns utilize the Tycoon2FA phishing-as-a-service platform and adversary-in-the-middle techniques to bypass multi-factor authentication.",
+        "recommended_action": "Implement robust email authentication protocols (SPF, DKIM, DMARC) and deploy phishing-resistant MFA to mitigate adversary-in-the-middle attacks."
+      },
+      "ground_truth": {
+        "threat_type": "phishing",
+        "severity": "High",
+        "iocs": [
+          "162.19.196[.]13",
+          "163.5.221[.]110",
+          "2fa.valoufroo.in[.]net",
+          "51.195.94[.]194",
+          "51.89.59[.]188",
+          "absoluteprintgroup[.]com",
+          "goorooyi.yoshemo.in[.]net",
+          "integralsm[.]cl",
+          "online.amphen0l-fci[.]com",
+          "scanuae[.]com",
+          "valoufroo.in[.]net"
+        ]
+      },
+      "latency_ms": 7719.0539836883545,
+      "processing_ms": 7712,
+      "cost_usd_est": null
+    }
+  ],
+  "metrics": {
+    "threat_type": {
+      "per_class": {
+        "APT": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 2
+        },
+        "DDoS": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666,
+          "support": 2
+        },
+        "exploit": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 3
+        },
+        "malware": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 3
+        },
+        "phishing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 3
+        },
+        "ransomware": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 2
+        },
+        "supply-chain": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 2
+        },
+        "vulnerability": {
+          "precision": 0.42857142857142855,
+          "recall": 1.0,
+          "f1": 0.6,
+          "support": 3
+        }
+      },
+      "macro": {
+        "precision": 0.8035714285714286,
+        "recall": 0.8125,
+        "f1": 0.7833333333333333
+      },
+      "accuracy": 0.8
+    },
+    "severity": {
+      "per_class": {
+        "Critical": {
+          "precision": 0.8181818181818182,
+          "recall": 1.0,
+          "f1": 0.9,
+          "support": 9
+        },
+        "High": {
+          "precision": 0.8888888888888888,
+          "recall": 0.8,
+          "f1": 0.8421052631578947,
+          "support": 10
+        },
+        "Medium": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1
+        }
+      },
+      "macro": {
+        "precision": 0.5690235690235691,
+        "recall": 0.6,
+        "f1": 0.5807017543859648
+      },
+      "accuracy": 0.85
+    },
+    "iocs": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 91,
+      "fp": 0,
+      "fn": 0
+    },
+    "latency": {
+      "mean_ms": 11437.76421546936,
+      "median_ms": 9943.859577178955,
+      "p95_ms": 23751.979196071632
+    },
+    "cost": {
+      "mean_usd_est": null
+    },
+    "n_ok": 20,
+    "n_error": 0
+  },
+  "baselines": {
+    "keyword": {
+      "records": [
+        {
+          "filename": "nvd_002_cve_2021_44228.txt",
+          "predicted": {
+            "threat_type": "vulnerability",
+            "severity": "Low"
+          },
+          "ground_truth": {
+            "threat_type": "vulnerability",
+            "severity": "Critical"
+          }
+        },
+        {
+          "filename": "nvd_006_cve_2023_34362.txt",
+          "predicted": {
+            "threat_type": "exploit",
+            "severity": "High"
+          },
+          "ground_truth": {
+            "threat_type": "vulnerability",
+            "severity": "Critical"
+          }
+        },
+        {
+          "filename": "nvd_008_cve_2024_1709.txt",
+          "predicted": {
+            "threat_type": "vulnerability",
+            "severity": "Low"
+          },
+          "ground_truth": {
+            "threat_type": "vulnerability",
+            "severity": "Critical"
+          }
+        },
+        {
+          "filename": "nvd_010_cve_2024_3094.txt",
+          "predicted": {
+            "threat_type": "supply-chain",
+            "severity": "Low"
+          },
+          "ground_truth": {
+            "threat_type": "supply-chain",
+            "severity": "Critical"
+          }
+        },
+        {
+          "filename": "cisa_025_solarwinds_supply_chain.txt",
+          "predicted": {
+            "threat_type": "APT",
+            "severity": "Medium"
+          },
+          "ground_truth": {
+            "threat_type": "supply-chain",
+            "severity": "Critical"
+          }
+        },
+        {
+          "filename": "cisa_013_papercut_exploitation.txt",
+          "predicted": {
+            "threat_type": "vulnerability",
+            "severity": "High"
+          },
+          "ground_truth": {
+            "threat_type": "exploit",
+            "severity": "Critical"
+          }
+        },
+        {
+          "filename": "google_005_zero_day_campaigns.txt",
+          "predicted": {
+            "threat_type": "exploit",
+            "severity": "Medium"
+          },
+          "ground_truth": {
+            "threat_type": "exploit",
+            "severity": "Critical"
+          }
+        },
+        {
+          "filename": "cert_001_pandasai_prompt_injection.txt",
+          "predicted": {
+            "threat_type": "vulnerability",
+            "severity": "Medium"
+          },
+          "ground_truth": {
+            "threat_type": "exploit",
+            "severity": "High"
+          }
+        },
+        {
+          "filename": "cisa_005_androxgh0st.txt",
+          "predicted": {
+            "threat_type": "phishing",
+            "severity": "Medium"
+          },
+          "ground_truth": {
+            "threat_type": "malware",
+            "severity": "High"
+          }
+        },
+        {
+          "filename": "cisa_016_snake_malware.txt",
+          "predicted": {
+            "threat_type": "malware",
+            "severity": "Low"
+          },
+          "ground_truth": {
+            "threat_type": "malware",
+            "severity": "High"
+          }
+        },
+        {
+          "filename": "cisa_017_emotet.txt",
+          "predicted": {
+            "threat_type": "malware",
+            "severity": "Low"
+          },
+          "ground_truth": {
+            "threat_type": "malware",
+            "severity": "High"
+          }
+        },
+        {
+          "filename": "cisa_003_akira_ransomware.txt",
+          "predicted": {
+            "threat_type": "ransomware",
+            "severity": "Low"
+          },
+          "ground_truth": {
+            "threat_type": "ransomware",
+            "severity": "High"
+          }
+        },
+        {
+          "filename": "microsoft_005_human_operated_ransomware.txt",
+          "predicted": {
+            "threat_type": "ransomware",
+            "severity": "Low"
+          },
+          "ground_truth": {
+            "threat_type": "ransomware",
+            "severity": "High"
+          }
+        },
+        {
+          "filename": "cert_002_http2_dos.txt",
+          "predicted": {
+            "threat_type": "DDoS",
+            "severity": "Medium"
+          },
+          "ground_truth": {
+            "threat_type": "DDoS",
+            "severity": "High"
+          }
+        },
+        {
+          "filename": "cert_004_tcp_dos.txt",
+          "predicted": {
+            "threat_type": "DDoS",
+            "severity": "Low"
+          },
+          "ground_truth": {
+            "threat_type": "DDoS",
+            "severity": "Medium"
+          }
+        },
+        {
+          "filename": "cisa_007_volt_typhoon.txt",
+          "predicted": {
+            "threat_type": "APT",
+            "severity": "Medium"
+          },
+          "ground_truth": {
+            "threat_type": "APT",
+            "severity": "Critical"
+          }
+        },
+        {
+          "filename": "cisa_010_russian_military.txt",
+          "predicted": {
+            "threat_type": "unknown",
+            "severity": "Medium"
+          },
+          "ground_truth": {
+            "threat_type": "APT",
+            "severity": "Critical"
+          }
+        },
+        {
+          "filename": "google_001_youtube_cookie_theft.txt",
+          "predicted": {
+            "threat_type": "phishing",
+            "severity": "Low"
+          },
+          "ground_truth": {
+            "threat_type": "phishing",
+            "severity": "High"
+          }
+        },
+        {
+          "filename": "google_002_apt42_phishing.txt",
+          "predicted": {
+            "threat_type": "phishing",
+            "severity": "Low"
+          },
+          "ground_truth": {
+            "threat_type": "phishing",
+            "severity": "High"
+          }
+        },
+        {
+          "filename": "microsoft_001_spoofed_domains.txt",
+          "predicted": {
+            "threat_type": "phishing",
+            "severity": "Medium"
+          },
+          "ground_truth": {
+            "threat_type": "phishing",
+            "severity": "High"
+          }
+        }
+      ],
+      "metrics": {
+        "threat_type": {
+          "per_class": {
+            "APT": {
+              "precision": 0.5,
+              "recall": 0.5,
+              "f1": 0.5,
+              "support": 2
+            },
+            "DDoS": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "support": 2
+            },
+            "exploit": {
+              "precision": 0.5,
+              "recall": 0.3333333333333333,
+              "f1": 0.4,
+              "support": 3
+            },
+            "malware": {
+              "precision": 1.0,
+              "recall": 0.6666666666666666,
+              "f1": 0.8,
+              "support": 3
+            },
+            "phishing": {
+              "precision": 0.75,
+              "recall": 1.0,
+              "f1": 0.8571428571428571,
+              "support": 3
+            },
+            "ransomware": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "support": 2
+            },
+            "supply-chain": {
+              "precision": 1.0,
+              "recall": 0.5,
+              "f1": 0.6666666666666666,
+              "support": 2
+            },
+            "unknown": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "vulnerability": {
+              "precision": 0.5,
+              "recall": 0.6666666666666666,
+              "f1": 0.5714285714285714,
+              "support": 3
+            }
+          },
+          "macro": {
+            "precision": 0.6944444444444444,
+            "recall": 0.6296296296296297,
+            "f1": 0.6439153439153439
+          },
+          "accuracy": 0.7
+        },
+        "severity": {
+          "per_class": {
+            "Critical": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 9
+            },
+            "High": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 10
+            },
+            "Low": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Medium": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 1
+            }
+          },
+          "macro": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "accuracy": 0.0
+        }
+      }
+    },
+    "first_n_sentences": {
+      "records": [
+        {
+          "filename": "nvd_002_cve_2021_44228.txt",
+          "summary": "Apache Log4j2 2.0-beta9 through 2.15.0 JNDI features used in configuration, log messages, and parameters do not protect against attacker-controlled LDAP and other JNDI-related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled. The issue is specific to log4j-core."
+        },
+        {
+          "filename": "nvd_006_cve_2023_34362.txt",
+          "summary": "MOVEit Transfer contains a SQL injection vulnerability that can allow an unauthenticated attacker to access its database. Depending on the database engine, an attacker may infer information about database contents and execute statements that alter or delete database elements. The record notes exploitation in the wild in May and June 2023."
+        },
+        {
+          "filename": "nvd_008_cve_2024_1709.txt",
+          "summary": "ConnectWise ScreenConnect 23.9.7 and prior are affected by an authentication bypass using an alternate path or channel. The vulnerability may allow an attacker direct access to confidential information or critical systems."
+        },
+        {
+          "filename": "nvd_010_cve_2024_3094.txt",
+          "summary": "Malicious code was discovered in upstream xz tarballs beginning with version 5.6.0. Through obfuscation, the liblzma build process extracts a prebuilt object file from a disguised test file and modifies specific liblzma functions. The modified library can affect software linked against it, intercepting and modifying data interaction."
+        },
+        {
+          "filename": "cisa_025_solarwinds_supply_chain.txt",
+          "summary": "CISA issued an advisory on the SolarWinds Orion supply-chain compromise affecting government agencies, critical infrastructure, and private-sector organizations. The advisory provides detection, containment, and remediation guidance for potentially affected environments."
+        },
+        {
+          "filename": "cisa_013_papercut_exploitation.txt",
+          "summary": "CISA and the FBI reported active exploitation of CVE-2023-27350 in PaperCut MF and NG. The vulnerability allows an unauthenticated remote actor to bypass authentication and execute malicious code. The advisory urges immediate patching, compromise hunting for systems not promptly patched, and use of its detection guidance and indicators."
+        },
+        {
+          "filename": "google_005_zero_day_campaigns.txt",
+          "summary": "Google TAG reported four in-the-wild zero-day campaigns targeting Chrome, Internet Explorer, and WebKit vulnerabilities. The report identifies CVE-2021-21166, CVE-2021-30551, CVE-2021-33742, and CVE-2021-1879 as vulnerabilities involved in three campaigns."
+        },
+        {
+          "filename": "cert_001_pandasai_prompt_injection.txt",
+          "summary": "CERT/CC reported that PandasAI versions 2.4.3 and earlier can allow arbitrary Python code execution through prompt injection. An attacker able to access the chat interface may manipulate generated code and compromise the running process or connected services. The issue is tracked as CVE-2024-12366."
+        },
+        {
+          "filename": "cisa_005_androxgh0st.txt",
+          "summary": "CISA and the FBI reported indicators and tactics associated with threat actors deploying Androxgh0st malware. The malware can support a botnet that identifies and compromises vulnerable networks. The advisory recommends patching known exploited vulnerabilities, minimizing internet exposure, and reviewing services that use credentials stored in .env files."
+        },
+        {
+          "filename": "cisa_016_snake_malware.txt",
+          "summary": "CISA and partners released guidance to help organizations identify and remove Snake malware linked to Russian intelligence activity. The advisory provides detection and remediation information for defenders investigating potentially compromised networks."
+        },
+        {
+          "filename": "cisa_017_emotet.txt",
+          "summary": "CISA and the Multi-State Information Sharing and Analysis Center issued an advisory on Emotet malware. The report describes an evolving threat that can spread through malicious email and enable further compromise, and it provides recommended defensive actions."
+        },
+        {
+          "filename": "cisa_003_akira_ransomware.txt",
+          "summary": "CISA and partner agencies issued an advisory on Akira ransomware activity. The report provides observed indicators and tradecraft and recommends defensive measures to reduce the risk and impact of ransomware incidents."
+        },
+        {
+          "filename": "microsoft_005_human_operated_ransomware.txt",
+          "summary": "Microsoft described human-operated ransomware as a sequence of malicious activities culminating in ransomware deployment, business interruption, and extortion. The report discusses detection signals that can identify malicious files, processes, and behavior during active attacks."
+        },
+        {
+          "filename": "cert_002_http2_dos.txt",
+          "summary": "CERT/CC reported a denial-of-service condition in some HTTP/2 server implementations that buffer response data under stalled flow control. A remote unauthenticated attacker can open simultaneous streams and cause memory exhaustion or service interruption. The note references CVE-2026-44909, CVE-2026-59173, and CVE-2026-59762."
+        },
+        {
+          "filename": "cert_004_tcp_dos.txt",
+          "summary": "CERT/CC reported denial-of-service conditions in affected Linux and FreeBSD TCP implementations. An attacker can use specially modified packets during established sessions to trigger expensive processing and degrade or interrupt service. The note references CVE-2018-5390 and CVE-2018-6922."
+        },
+        {
+          "filename": "cisa_007_volt_typhoon.txt",
+          "summary": "CISA and partners reported that PRC state-sponsored actors, known as Volt Typhoon, compromised and maintained access to U.S. critical infrastructure. The advisory emphasizes living-off-the-land techniques and provides detection and mitigation guidance for network defenders."
+        },
+        {
+          "filename": "cisa_010_russian_military.txt",
+          "summary": "CISA and partner agencies reported Russian military cyber actors targeting U.S. and global critical-infrastructure organizations. The advisory shares observed tactics and defensive recommendations to help organizations detect and mitigate related activity."
+        },
+        {
+          "filename": "google_001_youtube_cookie_theft.txt",
+          "summary": "Google TAG described financially motivated phishing campaigns against YouTube creators. Attackers used fake collaboration offers and malware download pages to steal browser cookies, hijack channels, and use or sell the compromised accounts. Indicators of Compromise (from source article, verified against raw HTML on 2026-07-27):\nMalware families: RedLine, Vidar, Kantal, Predator The Thief, Sorano, Nexus stealer, Azorult, Raccoon, Grand Stealer, Vikro Stealer, Masad, AdamantiumThief\nFile hashes (SHA256): 501fe2509581d43288664f0d2825a6a47102cd614f676bf39f0f80ab2fd43f2c (RedLine), c8b42437ffd8cfbbe568013eaaa707c212a2628232c01d809a3cf864fe24afa8 (RedLine), 9afc029ac5aa525e6fdcedf1e93a64980751eeeae3cf073fcbd1d223ab5c96d6 (Vidar), F59534e6d9e0559d99d2b3a630672a514dbd105b0d6fc9447d573ebd0053caba (Kantal, zip), Edea528804e505d202351eda0c186d7c200c854c41049d7b06d1971591142358 (Kantal, unpacked), 0d8cfa02515d504ca34273d8cfbe9d1d0f223e5d2cece00533c48a990fd8ce72 (Predator The Thief, zip), c7c8466a66187f78d953c64cbbd2be916328085aa3c5e48fde6767bc9890516b (Sorano), ed8b2af133b4144bef2b89dbec1526bf80cc06fe053ece1fa873f6bd1e99f0be (Nexus stealer), efc88a933a8baa6e7521c8d0cf78c52b0e3feb22985de3d35316a8b00c5073b3 (Nexus stealer), 8cafd480ac2a6018a4e716a4f9fd1254c4e93501a84ee1731ed7b98b67ab15dd (Azorult), 85066962ba1e8a0a8d6989fffe38ff564a6cf6f8a07782b3fbc0dcb19d2497cb (Raccoon), 6359d5fa7437164b300abc69c8366f9481cb91b7558d68c9e3b0c2a535ddc243 (Grand Stealer), 04deb8d8aee87b24c7ba0db55610bb12f7d8ec1e75765650e5b2b4f933b18f6d (Vikro Stealer), 6235573d8d178341dbfbead7c18a2f419808dc8c7c302ac61e4f9645d024ed85 (Masad), Db45bb99c44a96118bc5673a7ad65dc2a451ea70d4066715006107f65d906715 (AdamantiumThief)\nPhishing/malware-hosting domains: pro-swapper[.]com, downloadnature[.]space, downloadnature[.]com, fast-redirect[.]host, bragi-studio[.]com, plplme[.]site, fenzor[.]com, universe-photo[.]com, rainway-gaming[.]com, awaken1337[.]xyz, pixelka[.]fun, vortex-cloudgaming[.]com, vontex[.]tech, user52406.majorcore[.]space, voneditor[.]tech, spaceditor[.]space, roudar[.]com, peoplep[.]site, anypon[.]online, zeneditor[.]tech, yourworld[.]site, playerupbo[.]xyz, dizzify[.]me"
+        },
+        {
+          "filename": "google_002_apt42_phishing.txt",
+          "summary": "Google TAG reported targeted credential-phishing activity by Iranian government-backed APT42 against high-profile users in Israel and the United States. The group used phishing pages, malicious redirects, and abuse of cloud services to target government, campaign, diplomatic, academic, and NGO users. Indicators of Compromise (from source article, verified against raw HTML on 2026-07-27):\nMalware/tool names: NEWSTERMINAL, OFFICEFUEL, FUELDUMP, GORBLE PS, DWP, GCollection, LCollection, YCollection (phishing-kit families)\nFile hashes (SHA256): c67cd544a112cab1bb75b3c44df4caf2045ef0af51de9ece11261d6c504add32 (NEWSTERMINAL), baac058ddfc96c8aea8c0057077505f0ad3ff20311d999886fed549924404849 (OFFICEFUEL), bc2597ce09987022ff0498c6710a9b51a1a47ed8082ac044be2838b384157527 (OFFICEFUEL), 0180f4f29c550aa1ffaa21af51711b29de99fb1d7c932d008a0e9356ae8a7d60 (FUELDUMP), 82ae2eb470a5a16ca39ec84b387294eaa3ae82e5ada4b252470c1281e1f31c0a (FUELDUMP), 89c1d1b61d7f863f8a651726e29f2ae3de7958f36b49a756069021817947d06c (FUELDUMP), f83e2b3be2e6db20806a4b9b216edc7508fa81ce60bf59436d53d3ae435b6060 (FUELDUMP), 33a61ff123713da26f45b399a9828e29ad25fbda7e8994c954d714375ef92156 (GORBLE PS), 4ac088bf25d153ec2b9402377695b15a28019dc8087d98bd34e10fed3424125f (GORBLE PS), c3486133783379e13ed37c45dc6645cbee4c1c6e62e7988722931eef99c8eaf3 (GORBLE PS)\nIP addresses: 49.13.194[.]118, 91.107.150[.]184\nDomains/infrastructure: accredit-navigation[.]online, n9[.]cl, panel-short-check[.]live, check-pabnel-status[.]live, meetroomonlin1925.w3spaces[.]com, smaaaal[.]cfd, click-choose-figured[.]cfd, short-ion-per[.]live, checking-paneling[.]live, sharedrive.webredirect[.]org, visioneditor.loseyourip[.]com, s3api[.]shop, firebasestorage.googleapis[.]com (abused legitimate service)\nImpersonated/lure domains referenced: understandingthewar[.]org, brookings[.]email"
+        },
+        {
+          "filename": "microsoft_001_spoofed_domains.txt",
+          "summary": "Microsoft Threat Intelligence observed phishing actors using complex mail-routing scenarios and misconfigured spoof protections to send messages that appear internally generated. The campaigns used credential-phishing lures and phishing-as-a-service infrastructure, including adversary-in-the-middle techniques intended to bypass multifactor authentication. Indicators of Compromise (from source article, verified against raw HTML on 2026-07-27):\nPhishing-as-a-service platform: Tycoon2FA\nThreat actor: Storm-1747\nNote: no malware file hashes are present in this article; the page's other 64-character hex strings are WordPress CSS cache-busting versions and a Microsoft Threat Intelligence actor-profile URL slug, not IoCs."
+        }
+      ]
+    },
+    "zero_shot_llm": {
+      "records": [
+        {
+          "filename": "nvd_002_cve_2021_44228.txt",
+          "predicted": {
+            "threat_type": "Remote Code Execution (RCE)",
+            "severity": "Critical",
+            "summary": "A vulnerability in Apache Log4j2 (CVE-2021-44228) allows attackers to execute arbitrary code via JNDI lookups when message lookup substitution is enabled and attacker-controlled input is logged.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Remote Code Execution (RCE)\",\n  \"severity\": \"Critical\",\n  \"summary\": \"A vulnerability in Apache Log4j2 (CVE-2021-44228) allows attackers to execute arbitrary code via JNDI lookups when message lookup substitution is enabled and attacker-controlled input is logged.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 7988
+          },
+          "ground_truth": {
+            "threat_type": "vulnerability",
+            "severity": "Critical"
+          },
+          "latency_ms": 9716.434001922607,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "nvd_006_cve_2023_34362.txt",
+          "predicted": {
+            "threat_type": "SQL Injection",
+            "severity": "Critical",
+            "summary": "A SQL injection vulnerability in MOVEit Transfer (CVE-2023-34362) allows unauthenticated attackers to access, alter, or delete database contents. This vulnerability has been observed being exploited in the wild.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"SQL Injection\",\n  \"severity\": \"Critical\",\n  \"summary\": \"A SQL injection vulnerability in MOVEit Transfer (CVE-2023-34362) allows unauthenticated attackers to access, alter, or delete database contents. This vulnerability has been observed being exploited in the wild.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 15713
+          },
+          "ground_truth": {
+            "threat_type": "vulnerability",
+            "severity": "Critical"
+          },
+          "latency_ms": 15714.895963668823,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "nvd_008_cve_2024_1709.txt",
+          "predicted": {
+            "threat_type": "Authentication Bypass",
+            "severity": "Critical",
+            "summary": "CVE-2024-1709 affects ConnectWise ScreenConnect (version 23.9.7 and prior), allowing attackers to bypass authentication via an alternate path to gain access to confidential information or critical systems.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Authentication Bypass\",\n  \"severity\": \"Critical\",\n  \"summary\": \"CVE-2024-1709 affects ConnectWise ScreenConnect (version 23.9.7 and prior), allowing attackers to bypass authentication via an alternate path to gain access to confidential information or critical systems.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 3892
+          },
+          "ground_truth": {
+            "threat_type": "vulnerability",
+            "severity": "Critical"
+          },
+          "latency_ms": 3893.1589126586914,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "nvd_010_cve_2024_3094.txt",
+          "predicted": {
+            "threat_type": "Supply Chain Attack",
+            "severity": "Critical",
+            "summary": "Malicious code was discovered in upstream xz tarballs (version 5.6.0+), where an obfuscated build process injects a prebuilt object file into liblzma to intercept and modify data interactions in linked software.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Supply Chain Attack\",\n  \"severity\": \"Critical\",\n  \"summary\": \"Malicious code was discovered in upstream xz tarballs (version 5.6.0+), where an obfuscated build process injects a prebuilt object file into liblzma to intercept and modify data interactions in linked software.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 4634
+          },
+          "ground_truth": {
+            "threat_type": "supply-chain",
+            "severity": "Critical"
+          },
+          "latency_ms": 4635.775566101074,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cisa_025_solarwinds_supply_chain.txt",
+          "predicted": {
+            "threat_type": "Supply Chain Compromise",
+            "severity": "Critical",
+            "summary": "A SolarWinds Orion supply-chain compromise affecting government agencies, critical infrastructure, and private-sector organizations, requiring detection and remediation guidance.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Supply Chain Compromise\",\n  \"severity\": \"Critical\",\n  \"summary\": \"A SolarWinds Orion supply-chain compromise affecting government agencies, critical infrastructure, and private-sector organizations, requiring detection and remediation guidance.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 4147
+          },
+          "ground_truth": {
+            "threat_type": "supply-chain",
+            "severity": "Critical"
+          },
+          "latency_ms": 4147.943735122681,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cisa_013_papercut_exploitation.txt",
+          "predicted": {
+            "threat_type": "Remote Code Execution (RCE) / Authentication Bypass",
+            "severity": "Critical",
+            "summary": "Malicious actors are actively exploiting CVE-2023-27350 in PaperCut MF and NG, allowing unauthenticated remote attackers to bypass authentication and execute malicious code.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Remote Code Execution (RCE) / Authentication Bypass\",\n  \"severity\": \"Critical\",\n  \"summary\": \"Malicious actors are actively exploiting CVE-2023-27350 in PaperCut MF and NG, allowing unauthenticated remote attackers to bypass authentication and execute malicious code.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 2777
+          },
+          "ground_truth": {
+            "threat_type": "exploit",
+            "severity": "Critical"
+          },
+          "latency_ms": 2778.801441192627,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "google_005_zero_day_campaigns.txt",
+          "predicted": {
+            "threat_type": "Zero-day vulnerabilities",
+            "severity": "High",
+            "summary": "Google TAG identified four in-the-wild zero-day campaigns exploiting vulnerabilities in Chrome, Internet Explorer, and WebKit (including CVE-2021-21166, CVE-2021-30551, CVE-2021-33742, and CVE-2021-1879).",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Zero-day vulnerabilities\",\n  \"severity\": \"High\",\n  \"summary\": \"Google TAG identified four in-the-wild zero-day campaigns exploiting vulnerabilities in Chrome, Internet Explorer, and WebKit (including CVE-2021-21166, CVE-2021-30551, CVE-2021-33742, and CVE-2021-1879).\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 22916
+          },
+          "ground_truth": {
+            "threat_type": "exploit",
+            "severity": "Critical"
+          },
+          "latency_ms": 22917.311429977417,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cert_001_pandasai_prompt_injection.txt",
+          "predicted": {
+            "threat_type": "Prompt Injection / Remote Code Execution (RCE)",
+            "severity": "High",
+            "summary": "PandasAI versions 2.4.3 and earlier are vulnerable to prompt injection, allowing attackers to execute arbitrary Python code via the chat interface (CVE-2024-12366).",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Prompt Injection / Remote Code Execution (RCE)\",\n  \"severity\": \"High\",\n  \"summary\": \"PandasAI versions 2.4.3 and earlier are vulnerable to prompt injection, allowing attackers to execute arbitrary Python code via the chat interface (CVE-2024-12366).\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 3876
+          },
+          "ground_truth": {
+            "threat_type": "exploit",
+            "severity": "High"
+          },
+          "latency_ms": 3877.331018447876,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cisa_005_androxgh0st.txt",
+          "predicted": {
+            "threat_type": "Malware (Androxgh0st)",
+            "severity": "High",
+            "summary": "CISA and the FBI identified Androxgh0st malware used to build botnets that target vulnerable networks. The threat involves exploiting known vulnerabilities and targeting credentials stored in.env files.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Malware (Androxgh0st)\",\n  \"severity\": \"High\",\n  \"summary\": \"CISA and the FBI identified Androxgh0st malware used to build botnets that target vulnerable networks. The threat involves exploiting known vulnerabilities and targeting credentials stored in.env files.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 11026
+          },
+          "ground_truth": {
+            "threat_type": "malware",
+            "severity": "High"
+          },
+          "latency_ms": 11027.34375,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cisa_016_snake_malware.txt",
+          "predicted": {
+            "threat_type": "Malware (Snake)",
+            "severity": "High",
+            "summary": "CISA has issued guidance to help organizations detect and remediate Snake malware, which is linked to Russian intelligence activities.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Malware (Snake)\",\n  \"severity\": \"High\",\n  \"summary\": \"CISA has issued guidance to help organizations detect and remediate Snake malware, which is linked to Russian intelligence activities.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 8320
+          },
+          "ground_truth": {
+            "threat_type": "malware",
+            "severity": "High"
+          },
+          "latency_ms": 8321.635961532593,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cisa_017_emotet.txt",
+          "predicted": {
+            "threat_type": "Malware (Emotet)",
+            "severity": "High",
+            "summary": "An advisory regarding Emotet malware, which spreads via malicious emails to facilitate further system compromises.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Malware (Emotet)\",\n  \"severity\": \"High\",\n  \"summary\": \"An advisory regarding Emotet malware, which spreads via malicious emails to facilitate further system compromises.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 6956
+          },
+          "ground_truth": {
+            "threat_type": "malware",
+            "severity": "High"
+          },
+          "latency_ms": 6957.186460494995,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cisa_003_akira_ransomware.txt",
+          "predicted": {
+            "threat_type": "Ransomware",
+            "severity": "High",
+            "summary": "CISA and partner agencies issued an advisory regarding Akira ransomware activity, providing indicators of compromise, tradecraft details, and defensive recommendations.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Ransomware\",\n  \"severity\": \"High\",\n  \"summary\": \"CISA and partner agencies issued an advisory regarding Akira ransomware activity, providing indicators of compromise, tradecraft details, and defensive recommendations.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 2389
+          },
+          "ground_truth": {
+            "threat_type": "ransomware",
+            "severity": "High"
+          },
+          "latency_ms": 2390.315055847168,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "microsoft_005_human_operated_ransomware.txt",
+          "predicted": {
+            "threat_type": "Ransomware",
+            "severity": "High",
+            "summary": "The report focuses on improving AI-driven detection methods to identify the sequence of malicious activities used in human-operated ransomware attacks to prevent deployment and extortion.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Ransomware\",\n  \"severity\": \"High\",\n  \"summary\": \"The report focuses on improving AI-driven detection methods to identify the sequence of malicious activities used in human-operated ransomware attacks to prevent deployment and extortion.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 5800
+          },
+          "ground_truth": {
+            "threat_type": "ransomware",
+            "severity": "High"
+          },
+          "latency_ms": 5801.217555999756,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cert_002_http2_dos.txt",
+          "predicted": {
+            "threat_type": "Denial-of-Service (DoS)",
+            "severity": "High",
+            "summary": "A vulnerability in certain HTTP/2 server implementations allows remote unauthenticated attackers to cause memory exhaustion or service interruption by opening simultaneous streams that exploit stalled flow-control conditions.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Denial-of-Service (DoS)\",\n  \"severity\": \"High\",\n  \"summary\": \"A vulnerability in certain HTTP/2 server implementations allows remote unauthenticated attackers to cause memory exhaustion or service interruption by opening simultaneous streams that exploit stalled flow-control conditions.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 2886
+          },
+          "ground_truth": {
+            "threat_type": "DDoS",
+            "severity": "High"
+          },
+          "latency_ms": 2887.73512840271,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cert_004_tcp_dos.txt",
+          "predicted": {
+            "threat_type": "Denial of Service (DoS)",
+            "severity": "High",
+            "summary": "Vulnerabilities in Linux and FreeBSD TCP implementations (CVE-2018-5390 and CVE-2018-6922) allow attackers to use specially crafted packets to trigger resource-intensive processing, leading to service degradation or interruption.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Denial of Service (DoS)\",\n  \"severity\": \"High\",\n  \"summary\": \"Vulnerabilities in Linux and FreeBSD TCP implementations (CVE-2018-5390 and CVE-2018-6922) allow attackers to use specially crafted packets to trigger resource-intensive processing, leading to service degradation or interruption.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 3892
+          },
+          "ground_truth": {
+            "threat_type": "DDoS",
+            "severity": "Medium"
+          },
+          "latency_ms": 3893.350839614868,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cisa_007_volt_typhoon.txt",
+          "predicted": {
+            "threat_type": "State-Sponsored Cyberattack / Infrastructure Compromise",
+            "severity": "Critical",
+            "summary": "PRC state-sponsored actors (Volt Typhoon) have compromised U.S. critical infrastructure using living-off-the-land techniques to maintain persistent access.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"State-Sponsored Cyberattack / Infrastructure Compromise\",\n  \"severity\": \"Critical\",\n  \"summary\": \"PRC state-sponsored actors (Volt Typhoon) have compromised U.S. critical infrastructure using living-off-the-land techniques to maintain persistent access.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 17656
+          },
+          "ground_truth": {
+            "threat_type": "APT",
+            "severity": "Critical"
+          },
+          "latency_ms": 17657.70983695984,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "cisa_010_russian_military.txt",
+          "predicted": {
+            "threat_type": "State-sponsored cyberattack",
+            "severity": "High",
+            "summary": "Russian military cyber actors are targeting critical infrastructure organizations both in the U.S. and globally, prompting defensive advisories from CISA.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"State-sponsored cyberattack\",\n  \"severity\": \"High\",\n  \"summary\": \"Russian military cyber actors are targeting critical infrastructure organizations both in the U.S. and globally, prompting defensive advisories from CISA.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 6836
+          },
+          "ground_truth": {
+            "threat_type": "APT",
+            "severity": "Critical"
+          },
+          "latency_ms": 6836.9081020355225,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "google_001_youtube_cookie_theft.txt",
+          "predicted": {
+            "threat_type": "Phishing / Malware (Cookie Theft)",
+            "severity": "High",
+            "summary": "Financially motivated phishing campaigns targeting YouTube creators using fake collaboration offers to deliver various malware families (such as RedLine and Vidar). The goal is to steal browser cookies to hijack YouTube channels for unauthorized use or sale.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Phishing / Malware (Cookie Theft)\",\n  \"severity\": \"High\",\n  \"summary\": \"Financially motivated phishing campaigns targeting YouTube creators using fake collaboration offers to deliver various malware families (such as RedLine and Vidar). The goal is to steal browser cookies to hijack YouTube channels for unauthorized use or sale.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 4352
+          },
+          "ground_truth": {
+            "threat_type": "phishing",
+            "severity": "High"
+          },
+          "latency_ms": 4353.476762771606,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "google_002_apt42_phishing.txt",
+          "predicted": {
+            "threat_type": "Credential Phishing",
+            "severity": "High",
+            "summary": "Iranian-backed APT42 is conducting targeted credential-phishing campaigns against high-profile government, diplomatic, and academic users in Israel and the United States using malicious redirects and abused cloud services.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Credential Phishing\",\n  \"severity\": \"High\",\n  \"summary\": \"Iranian-backed APT42 is conducting targeted credential-phishing campaigns against high-profile government, diplomatic, and academic users in Israel and the United States using malicious redirects and abused cloud services.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 3302
+          },
+          "ground_truth": {
+            "threat_type": "phishing",
+            "severity": "High"
+          },
+          "latency_ms": 3303.7729263305664,
+          "cost_usd_est": null
+        },
+        {
+          "filename": "microsoft_001_spoofed_domains.txt",
+          "predicted": {
+            "threat_type": "Phishing",
+            "severity": "High",
+            "summary": "Threat actor Storm-1747 is using complex mail-routing and misconfigured protections to spoof internal domains. The campaign utilizes the Tycoon2FA phishing-as-a-service platform and adversary-in-the-middle techniques to bypass multi-factor authentication (MFA) and steal credentials.",
+            "raw_output": "```json\n{\n  \"threat_type\": \"Phishing\",\n  \"severity\": \"High\",\n  \"summary\": \"Threat actor Storm-1747 is using complex mail-routing and misconfigured protections to spoof internal domains. The campaign utilizes the Tycoon2FA phishing-as-a-service platform and adversary-in-the-middle techniques to bypass multi-factor authentication (MFA) and steal credentials.\"\n}\n```",
+            "parsed": true,
+            "processing_ms": 7716
+          },
+          "ground_truth": {
+            "threat_type": "phishing",
+            "severity": "High"
+          },
+          "latency_ms": 7717.525005340576,
+          "cost_usd_est": null
+        }
+      ],
+      "metrics": {
+        "threat_type": {
+          "per_class": {
+            "APT": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 2
+            },
+            "Authentication Bypass": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Credential Phishing": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "DDoS": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 2
+            },
+            "Denial of Service (DoS)": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Denial-of-Service (DoS)": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Malware (Androxgh0st)": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Malware (Emotet)": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Malware (Snake)": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Phishing": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Phishing / Malware (Cookie Theft)": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Prompt Injection / Remote Code Execution (RCE)": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Ransomware": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Remote Code Execution (RCE)": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Remote Code Execution (RCE) / Authentication Bypass": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "SQL Injection": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "State-Sponsored Cyberattack / Infrastructure Compromise": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "State-sponsored cyberattack": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Supply Chain Attack": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Supply Chain Compromise": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "Zero-day vulnerabilities": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "exploit": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 3
+            },
+            "malware": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 3
+            },
+            "phishing": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 3
+            },
+            "ransomware": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 2
+            },
+            "supply-chain": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 2
+            },
+            "vulnerability": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 3
+            }
+          },
+          "macro": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "accuracy": 0.0
+        },
+        "severity": {
+          "per_class": {
+            "Critical": {
+              "precision": 1.0,
+              "recall": 0.7777777777777778,
+              "f1": 0.875,
+              "support": 9
+            },
+            "High": {
+              "precision": 0.7692307692307693,
+              "recall": 1.0,
+              "f1": 0.8695652173913043,
+              "support": 10
+            },
+            "Medium": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 1
+            }
+          },
+          "macro": {
+            "precision": 0.5897435897435898,
+            "recall": 0.5925925925925926,
+            "f1": 0.5815217391304347
+          },
+          "accuracy": 0.85
+        }
+      },
+      "parse_failure_rate": 0.0
+    }
+  }
+}

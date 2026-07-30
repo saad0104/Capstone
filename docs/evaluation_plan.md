@@ -276,24 +276,51 @@ To prove that specific components matter, run ablations:
 
 ## How to Run Evaluation
 
-1. **Prepare test set:**
+`backend/evaluate.py` and `backend/report_metrics.py` exist and are complete
+(implemented 2026-07-30). Both are run **from the repo root**, not
+`cd backend` — `backend` is a Python package with relative imports (same
+convention as `flask --app backend.app:create_app run` and
+`pytest backend/tests/`).
+
+1. **Test set is already prepared**: 20 annotated documents in
+   `data/annotations/labels.csv`, with corresponding raw text in `data/raw/`.
+
+2. **Run the evaluation**:
 
    ```bash
-   # Ensure 20 annotated examples in data/annotations/labels.csv
-   # Corresponding raw files in data/raw/
+   python -m backend.evaluate --test_set data/annotations/labels.csv --output results.json
    ```
 
-2. **Run evaluation script** (to be created):
+   Useful flags: `--provider <gemini|grok|ollama|openrouter>` to override the
+   default provider (`LLM_PROVIDER` in `.env`) for the run; `--limit N` for a
+   cheap sanity check on a few documents; `--skip_baselines` /
+   `--skip_baseline2` to skip the baselines that make real paid LLM calls;
+   `--pace_seconds N` to throttle calls between requests (default 15s,
+   tuned for Gemini's free-tier per-minute limit — lower it for a paid tier
+   or a provider with a higher rate limit).
+
+   **Free-tier quota note**: this harness makes ~20 real LLM calls for the
+   main system, plus another ~20 for Baseline 2 (zero-shot). Gemini's free
+   tier caps at **20 requests/day** per model (not just per-minute) —
+   cumulative same-day testing can exhaust this well before a full
+   evaluation run completes. If that happens, either wait for the daily
+   quota to reset or pass `--provider openrouter` (also supported, separate
+   quota pool, itself capped at 50 requests/day without purchased credits).
+
+3. **Generate the report**:
 
    ```bash
-   cd backend
-   python evaluate.py --test_set ../data/annotations/labels.csv --output results.json
+   python -m backend.report_metrics results.json --output docs/evaluation_results.md
    ```
 
-3. **Generate report:**
-   ```bash
-   python report_metrics.py results.json > ../docs/evaluation_results.md
-   ```
+   Once human ratings exist (see `docs/evaluation_ratings_template.csv`,
+   generated automatically by `evaluate.py`), add `--ratings <filled-in-csv>`
+   to include real usefulness scores instead of "not yet measured."
+
+See `docs/evaluation_results.md` for the actual results from the most recent
+run, including a Findings section on systematic error patterns and a
+Methodology Notes section covering known evaluation-harness-specific
+adjustments (header-stripping, defanged-IoC handling, etc.).
 
 ---
 

@@ -77,10 +77,22 @@ def _build_ollama():
     )
 
 
+def _build_openrouter():
+    from langchain_openai import ChatOpenAI  # OpenRouter's API is OpenAI-compatible
+
+    return ChatOpenAI(
+        model=os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free"),
+        api_key=os.getenv("OPENROUTER_API_KEY"),
+        base_url=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
+        temperature=0,
+    )
+
+
 PROVIDER_REGISTRY = {
     "gemini": _build_gemini,
     "grok": _build_grok,
     "ollama": _build_ollama,
+    "openrouter": _build_openrouter,
 }
 
 
