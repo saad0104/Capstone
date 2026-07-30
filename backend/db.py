@@ -10,6 +10,16 @@ def get_engine():
     if not db_url:
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         db_url = f"sqlite:///{os.path.join(base_dir, 'data', 'threatgpt.db')}"
+    if db_url.startswith("sqlite:///"):
+        # SQLite creates the DB file itself but not its parent directory.
+        # data/ is gitignored (holds the raw corpus, kept out of git), so it
+        # doesn't exist at all on a fresh clone -- e.g. a fresh Render
+        # deploy -- which makes sqlite3 fail with "unable to open database
+        # file" the moment init_db() runs. Ensure the directory exists first.
+        db_path = db_url[len("sqlite:///"):]
+        db_dir = os.path.dirname(db_path)
+        if db_dir:
+            os.makedirs(db_dir, exist_ok=True)
     connect_args = {"check_same_thread": False} if db_url.startswith("sqlite") else {}
     return create_engine(db_url, connect_args=connect_args)
 
