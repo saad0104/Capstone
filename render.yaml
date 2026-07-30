@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn 'backend.app:create_app()' --bind 0.0.0.0:$PORT
+    startCommand: gunicorn 'backend.app:create_app()' --bind 0.0.0.0:$PORT --timeout 120
     healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
@@ -14,6 +14,8 @@ services:
       - key: GEMINI_API_KEY
         sync: false
       - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
         sync: false
       - key: CORS_ORIGINS
         sync: false
