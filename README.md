@@ -43,6 +43,16 @@ Configuration
 
 - Copy `.env.example` to `.env` and fill in API keys and DB path.
 
+## Current Project Status
+
+- **Phase 1 complete:** 50 source-attributed CTI records and a balanced 20-record, human-reviewed ground-truth set in `data/annotations/labels.csv`.
+- **Phase 2 complete:** Flask analysis and alert-management API, structured LangChain LLM providers, regex IoC extraction, alert enrichment, and SQLite persistence.
+- **Phase 3 complete:** React dashboard with Analyze, Alerts List, and Alert Detail routes; filters; CSV/JSON export; and CORS support.
+- **Phase 4 initial run complete:** the 20-record evaluation is reported in `docs/evaluation_results.md`. Threat-type macro F1 was 0.78 and IoC F1 was 1.00; severity F1, p95 latency, and human usefulness ratings still need follow-up.
+- **Next:** final report/presentation work, human summary ratings, browser acceptance testing, and optional Render + Netlify deployment.
+
+See `docs/status_update.md` for the authoritative current-state summary and `docs/architecture.md` for the system design.
+
 Development workflow
 
 - Work on feature branches (`feature/<name>`) and open small PRs to `main`.

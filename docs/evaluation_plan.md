@@ -211,17 +211,26 @@ To prove that specific components matter, run ablations:
 
 | Phase   | Dates      | Activity                                               |
 | ------- | ---------- | ------------------------------------------------------ |
-| Phase 1 | Days 8–16  | Collect 50–100 docs, manually label 20                 |
-| Phase 2 | Days 17–27 | Implement backend, test on validation set (informal)   |
-| Phase 3 | Days 28–37 | Build frontend, integrate end-to-end                   |
-| Phase 4 | Days 38–40 | **Formal evaluation**: run all metrics on 20 test docs |
-| Phase 5 | Days 41–45 | Document results, compare baselines, write report      |
+| Phase 1 | Complete | 50 records collected; 20 records selected and accepted as ground truth |
+| Phase 2 | Complete | Backend pipeline and API implemented                    |
+| Phase 3 | Complete | Frontend and end-to-end integration implemented         |
+| Phase 4 | Initial run complete | 20-document evaluation and baselines recorded on 2026-07-30 |
+| Phase 5 | In progress | Final report, human ratings, presentation, and deployment remain |
 
 ---
 
 ## Reporting Results
 
-### Results Table Template
+### Current Results
+
+The initial formal run is recorded in `docs/evaluation_results.md`. It used
+OpenRouter with `google/gemma-4-26b-a4b-it:free`, completed all 20 requests,
+and produced threat-type macro F1 of 0.78, severity macro F1 of 0.58, IoC F1
+of 1.00, and p95 latency of 23.75 seconds. Human usefulness ratings have not
+yet been collected. These results are provider/model-specific and must not be
+treated as Gemini performance.
+
+### Historical Illustration (Not Actual Results)
 
 ```markdown
 ## Classification Results
@@ -291,7 +300,7 @@ convention as `flask --app backend.app:create_app run` and
    python -m backend.evaluate --test_set data/annotations/labels.csv --output results.json
    ```
 
-   Useful flags: `--provider <gemini|grok|ollama|openrouter>` to override the
+   Useful flags: `--provider <gemini|grok|ollama|openrouter|claude>` to override the
    default provider (`LLM_PROVIDER` in `.env`) for the run; `--limit N` for a
    cheap sanity check on a few documents; `--skip_baselines` /
    `--skip_baseline2` to skip the baselines that make real paid LLM calls;
@@ -326,12 +335,18 @@ adjustments (header-stripping, defanged-IoC handling, etc.).
 
 ## Success Criteria (Course Deliverable)
 
-- ✓ Classification F1 > 0.75 (acceptable for capstone)
-- ✓ Severity F1 > 0.70
-- ✓ IoC extraction F1 > 0.80
-- ✓ Human rating ≥ 3.5/5
-- ✓ Latency < 15 seconds
-- ✓ Beat all baselines
+| Criterion | Target | Initial run | Status |
+| --- | --- | --- | --- |
+| Threat-type macro F1 | > 0.75 | 0.78 | Met |
+| Severity macro F1 | > 0.70 | 0.58 | Not met |
+| IoC F1 | > 0.80 | 1.00 | Met |
+| Human rating | ≥ 3.5 | Not measured | Pending |
+| p95 latency | < 15 s | 23.75 s | Not met |
+| Beat all classification baselines | Yes | Yes | Met |
+
+The unmet severity and latency targets are documented findings, not hidden
+failures. Re-running with the default Gemini provider after quota reset is the
+appropriate next comparison; do not tune against the held-out 20-record set.
 
 ---
 

@@ -246,6 +246,20 @@ Impact: <consequences (positive/negative)>
 
 ---
 
+### 13. Phase 4 Evaluation: fixed held-out set and provider-specific reporting
+
+**Date:** 2026-07-30  
+**Area:** data | backend | evaluation  
+**Title:** Evaluate against the accepted 20-record set without tuning on it
+**Context:** The project required a formal, reproducible measurement of the implemented pipeline and baseline comparisons.
+
+**Decision:** Use `data/annotations/labels.csv` as a held-out 20-record ground-truth set; run the system through an isolated temporary SQLite database; report the provider and model with every result. The initial run used OpenRouter with `google/gemma-4-26b-a4b-it:free`.
+**Rationale:** Provider quality and latency vary materially, so an evaluation result is not a universal claim about all configured providers. Keeping the evaluation database isolated also prevents test alerts from polluting normal application data.
+**Outcome:** The initial run completed 20/20 requests: threat-type macro F1 0.78, severity macro F1 0.58, IoC F1 1.00, and p95 latency 23.75 seconds. Human usefulness ratings remain outstanding.
+**Impact:** Threat-type and IoC targets were met, while severity and latency were not. Severity rules and prompts must not be tuned on this held-out set; any later comparison should use a different provider or a separate development set.
+
+---
+
 ## Lessons Learned
 
 ### Phase 0 (Setup)
@@ -300,12 +314,13 @@ Impact: <consequences (positive/negative)>
 | Issue                                 | Workaround                                    | Priority  |
 | ------------------------------------- | --------------------------------------------- | --------- |
 | LLM API response time > 30s sometimes | Add timeout + fallback response               | High      |
-| spaCy model download large (~50MB)    | Make optional, fail gracefully if missing     | Medium    |
+| NLTK is installed but unused          | Keep regex authoritative until a concrete NLP need exists | Low |
 | SQLite locks under concurrent load    | Switch to PostgreSQL if > 20 concurrent users | Low (MVP) |
+| Free-tier LLM quotas can interrupt large runs | Use evaluator pacing/retry or run after quota reset | Medium |
 
 ---
 
-## Performance Metrics (to be updated)
+## Performance Metrics
 
 As you run the system, record:
 
@@ -315,14 +330,16 @@ As you run the system, record:
 - Frontend page load time
 - Classification accuracy on test set
 
-Example:
+Initial formal run (2026-07-30, OpenRouter / `google/gemma-4-26b-a4b-it:free`, n=20):
 
-```
-Date: 2026-07-23
-Metric: Average latency (n=10 requests)
-Value: 8.2 seconds
-Notes: Includes LLM API roundtrip (~6s), preprocessing (~0.5s), DB write (~0.1s)
-```
+- Threat-type macro F1: 0.78
+- Severity macro F1: 0.58
+- IoC F1: 1.00
+- Mean latency: 11.44 seconds; p95: 23.75 seconds
+- Human usefulness ratings: pending
+
+See `docs/evaluation_results.md` for per-class metrics, baselines, findings,
+and methodology. These figures are provider/model-specific.
 
 ---
 

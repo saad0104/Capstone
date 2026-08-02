@@ -44,11 +44,11 @@ into this commit.
 3. When prompted for environment variables, enter real values for:
    - `LLM_PROVIDER` (e.g. `gemini`)
    - `GEMINI_API_KEY` (your real key — paste directly into Render's UI, never into a file or chat)
-   - `OPENROUTER_API_KEY` (same — only needed if you plan to use that provider)
+  - `OPENROUTER_API_KEY` (only needed for OpenRouter), `XAI_API_KEY` (only needed for Grok), or `ANTHROPIC_API_KEY` (only needed for Claude)
    - `CORS_ORIGINS` — temporarily set to `http://localhost:5173`; corrected in Step 4 once the real Netlify URL is known
    - `DATABASE_URL` — `sqlite:///data/threatgpt.db` is fine to start (not a secret, just a path)
 4. Deploy. Note the resulting URL, e.g. `https://threatgpt-backend.onrender.com`.
-5. Verify: `curl https://threatgpt-backend.onrender.com/health` → `{"status": "ok"}`.
+5. Verify: `curl https://threatgpt-backend.onrender.com/health` → `{"status": "ok"}`. The deployment is not complete until this succeeds.
 
 ## Step 3 — Point Netlify at the Render backend (dashboard)
 

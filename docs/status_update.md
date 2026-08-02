@@ -1,100 +1,49 @@
-# ThreatGPT — Project Status Update
+# ThreatGPT — Project Status
 
-_Last updated: 2026-07-29_
+_Last updated: 2026-08-02_
 
-## What it is
+ThreatGPT is an LLM-assisted Cyber Threat Intelligence system that turns a raw threat report into a structured, stored alert. Its implemented flow is:
 
-An LLM-assisted CTI (cyber threat intelligence) summarization and alert-generation system, built as a capstone project.
-
-## Architecture (backend and frontend both built and verified end-to-end)
-
-```
-React/Tailwind dashboard (dark theme, react-router-dom)
-  "/" Analyze + provider selector | "/alerts" List/Filter/CSV | "/alerts/:id" Detail/JSON export
-        │  HTTP/REST (CORS via flask-cors, CORS_ORIGINS env var)
-        ▼
-Flask API (/health, /api/analyze, /api/alerts, /api/alerts/<id>)
-        │
-        ▼
-Preprocessing (regex IoC extraction; nltk installed, staged, unused)
-        │
-        ▼
-LLM service (LangChain: prompt | chat_model | PydanticOutputParser,
-             2-shot structured-JSON prompt; provider registry --
-             Gemini / Grok / local Ollama, one active by default or
-             per-request via AnalyzeRequest.provider)
-        │
-        ▼
-Alert engine (backend/alert_engine.py: IoC reconciliation,
-              severity keyword cross-check, upgrade-only)
-        │
-        ▼
-SQLite (Alert table, via backend/db.py)
-        │
-        ▼
-Dashboard display -- alert appears in Alerts Context immediately, no refetch needed
+```text
+React dashboard → Flask API → regex IoC extraction → LangChain LLM analysis
+                → alert-engine severity reconciliation → SQLite → dashboard/export
 ```
 
-- **Frontend:** React + Vite + Tailwind, react-router-dom, Context+useReducer state — fully built, all 3 pages working against the real API
-- **Backend:** Flask + Werkzeug (kept over FastAPI for Phase 2, see `docs/implementation_notes.md` decision #7)
-- **Validation:** Pydantic v2 (manual validation in Flask routes)
-- **Preprocessing:** regex (IoC extraction) — sole authoritative source, matches the method the Phase 1 ground-truth CSVs were built with
-- **LLM service:** LangChain provider registry — Gemini (live-verified), Grok/Ollama (implemented, untested, honestly labeled "unverified" in the UI)
-- **Database:** SQLAlchemy + SQLite (MVP), Postgres upgrade path
-- **Deployment target:** Render/Railway (backend) + Vercel/Netlify (frontend) — not yet deployed anywhere
+## Completed work
 
-## Plan (5 phases)
+| Phase | Status | Deliverable |
+| --- | --- | --- |
+| Phase 0 — Setup | Complete | Flask/React scaffold, configuration, SQLite model |
+| Phase 1 — Data | Complete | 50 source-attributed records across five publishers and a balanced 20-record accepted ground-truth set |
+| Phase 2 — Backend | Complete | Analyze, alert-list/detail/delete APIs; structured LLM analysis; regex IoCs; SQLite persistence; 20 backend tests |
+| Phase 3 — Frontend | Complete | Analyze, alert-list, and alert-detail routes; filters; CSV/JSON export; provider selector; CORS support |
+| Phase 4 — Evaluation | Complete (initial run) | 20-document run, baselines, metrics report, and findings in `docs/evaluation_results.md` |
+| Phase 5 — Final report/deployment | Pending | Final written report, presentation assets, human usefulness ratings, and optional deployment |
 
-| Phase | Timeline | Activity |
-|---|---|---|
-| 1 | Days 8–16 | Data collection: 50–100 docs, 20 manually labeled |
-| 2 | Days 17–27 | Backend implementation |
-| 3 | Days 28–37 | Frontend, end-to-end integration |
-| 4 | Days 38–40 | Formal evaluation |
-| 5 | Days 41–45 | Report writing |
+## Current implementation
 
-## Done
+- **Frontend:** React, Vite, Tailwind, `react-router-dom`, and Context + `useReducer`.
+- **Backend:** Flask with Pydantic validation and CORS through `flask-cors`.
+- **LLM layer:** LangChain structured-output chain with Gemini, Grok, Ollama, OpenRouter, and Claude provider adapters. The UI exposes Gemini, Grok, and Ollama; Gemini is the only provider live-verified end-to-end in the application UI.
+- **Alert processing:** regex is the authoritative source for IP, CVE, hash, and domain extraction; the alert engine can only upgrade severity from the LLM result.
+- **Storage:** SQLAlchemy with SQLite. A PostgreSQL migration remains a future scalability option.
 
-- **Phase 0 (Setup)** — complete. Repo scaffold, Flask skeleton, SQLAlchemy `Alert` model, React/Vite scaffold.
-- **Phase 1 (Data collection)** — complete.
-  - 50 raw, source-attributed documents (NVD, CISA, Google Threat Analysis Group, Microsoft Security, CERT/CC), full provenance in `data/metadata.csv`.
-  - 20-record balanced, human-reviewed ground-truth set in `data/annotations/labels.csv`.
-  - Broader 50-record draft label pool in `data/annotations/draft_labels.csv` (unreviewed scratch set, not required for Phase 1 exit).
-- **Phase 2 (Backend)** — complete, 2026-07-28.
-  - `POST /api/analyze`, `GET /api/alerts`, `GET /api/alerts/<id>`, `DELETE /api/alerts/<id>` alongside `/health`.
-  - Full pipeline wired: regex preprocessing → LangChain LLM call → alert engine reconciliation → SQLite persistence → JSON response.
-  - 18 passing tests (`backend/tests/`), LLM mocked so no live API key is needed to run the suite.
-  - Live-verified against a real Gemini API call: correct threat classification, severity correctly upgraded by the keyword cross-check, correct CVE extraction.
-  - Grok and Ollama providers are implemented on the same registry pattern but not yet tested against a real key/local instance.
-- **Phase 3 (Frontend)** — complete, 2026-07-29.
-  - Three routed pages (`/`, `/alerts`, `/alerts/:id`) via `react-router-dom`, alert state in a Context+`useReducer` store.
-  - Analyze page: textarea, honest Gemini/Grok/Ollama provider selector (Grok/Ollama visibly badged "unverified"), inline result display, distinct error UI for invalid input (400) vs. provider failure (502) vs. unreachable backend.
-  - Alerts list: threat_type/severity filters, CSV export of the filtered set.
-  - Alert detail: full field display, JSON export, delete with confirm.
-  - Dark SOC-dashboard theme via Tailwind design tokens (severity color scale, monospace IoC chips).
-  - Backend touch-ups required to make this work: `AnalyzeRequest.provider` field threaded through to `LLMService`, and CORS (`flask-cors`, env-configurable) since the backend had none at all before.
-  - Verified: production build succeeds, all modules transform cleanly through the dev server, full `/api/analyze` → list → detail → delete flow confirmed live against the real backend with real CORS headers. **Not verified: an actual browser click-through** — no browser tool available, so layout/interactivity/visual correctness still needs a human pass.
-  - One real pre-existing bug caught and fixed: `postcss.config.cjs` never existed since Phase 0, so Tailwind was never actually processing anything — `@tailwind`/`@apply` were being shipped to the browser as literal text.
+## Initial evaluation outcome
 
-## Not yet built
+The recorded 2026-07-30 run used OpenRouter with `google/gemma-4-26b-a4b-it:free` on all 20 held-out documents:
 
-- **Phase 4 (Evaluation)** — `evaluate.py` / `report_metrics.py` don't exist yet, but the backend they'd run against now exists — this could start any time. **This is the next milestone.**
-- **Phase 5 (Report)** — not started.
-- Rate limiting on `/api/analyze` — deliberately deferred as a stretch item (decision already logged in `docs/implementation_notes.md`, not implemented).
-- Frontend automated tests (Vitest/React Testing Library) — deliberately deferred, same MVP-scope tradeoff as the backend rate limiter.
-- A real browser click-through of the frontend — recommended before calling Phase 3 fully done, not something this session could perform.
-- Deferred by explicit decision, not forgotten: FastAPI migration, LangGraph, git wiki, "modular git deployment" (this directory isn't a git repo yet).
+- Threat-type macro F1: **0.78** — target met.
+- Severity macro F1: **0.58** — target not met.
+- IoC F1: **1.00** — target met.
+- p95 latency: **23.75 s** — target not met for this provider/model.
+- Human summary ratings: **not yet collected**.
 
-## Bottom line
+See `docs/evaluation_results.md` for the full tables, baseline comparison, and methodology notes. These results are specific to that provider/model and should not be presented as Gemini performance.
 
-Both backend and frontend are real and working end-to-end, not just scaffolded — a user can submit a threat report, see it classified and enriched with real IoCs, browse/filter/export the alert history, and drill into and delete individual alerts. Formal evaluation (Phase 4) against the 20-doc `labels.csv` set is the natural next step now that the full pipeline exists to run it against.
+## Remaining work and known limitations
 
-
-
-1. MVP 
-2. Fast API, nltk, langchain/langgraph and attention grab
-3. Modular git deployment
-4. git wiki
-5. design frontend(cyber sec theme)
-6. local llm
-7. llm selection option for user(gemini, grok, local ollama powered)
+- Collect human usefulness ratings for the 20 generated summaries and regenerate the evaluation report with them.
+- Perform a real-browser UI click-through before final sign-off.
+- Prepare the final written report and presentation/poster assets.
+- Deployment configuration is prepared for Render + Netlify, but no deployed URL is recorded.
+- Production caching, retry/backoff, rate limiting, numeric confidence scoring, frontend automated tests, and persistent database storage are intentionally deferred MVP work.

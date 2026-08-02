@@ -17,18 +17,29 @@ Format
 - Ten additional CISA records focused on phishing, malware, DDoS/DoS, exploit activity, and supply-chain compromise
 - Fifteen records from Google Threat Analysis Group, Microsoft Security, and CERT/CC, bringing the Phase 1 corpus to 50 documents
 - A balanced 20-record evaluation selection in `data/annotations/labels.csv`
+- Evaluation harnesses (`backend/evaluate.py`, `backend/report_metrics.py`) and the initial 20-document results report
 - `data/metadata.csv` with a source URL, publication date, collection date, and category hint for every starter record
 - `data/annotations/draft_labels.csv` with reviewable seed labels and summaries
-- Draft labels for every document in the 20-record starter corpus
+- Draft labels for all 50 corpus documents
 
 ### Changed
 
 - Documented the dataset provenance and the separation between draft labels and accepted evaluation ground truth
+- Updated the project documentation to reflect the completed initial evaluation and the full five-provider backend registry
 
 ### Notes
 
 - The 50-document starter corpus spans vulnerability, supply-chain, ransomware, malware, phishing, exploit, DDoS, and APT material across five publishers (NVD, CISA, Google TAG, Microsoft, CERT/CC).
-- `data/annotations/draft_labels.csv` (the broader NVD/CISA starter batch) remains unreviewed and is not accepted ground truth.
+- `data/annotations/draft_labels.csv` covers the wider 50-document corpus and remains separate from the accepted ground-truth set.
+- The initial Phase 4 run is complete; see `docs/evaluation_results.md`. Phase 5 final-report work, human usefulness ratings, browser acceptance testing, and optional deployment remain.
+
+## 2026-08-02 — Documentation synchronized with implemented project (Saad / Codex)
+
+Changed:
+
+- Reconciled the architecture, data guide, deployment runbook, evaluation plan, implementation notes, README, and status summary with the current code and the initial Phase 4 evaluation.
+- Documented the full backend provider registry (Gemini, Grok, Ollama, OpenRouter, and Claude), while retaining the UI’s three-provider selector scope.
+- Replaced stale future-tense Phase 4 and success-criteria statements with the measured provider-specific results and outstanding work.
 
 ## 2026-07-29 — Phase 3 frontend implemented (Saad / Claude)
 

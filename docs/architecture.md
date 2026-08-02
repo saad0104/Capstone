@@ -43,8 +43,8 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 │  │  │ 3. LLM Service (LangChain provider registry)        ││  │
 │  │  │    - prompt | chat_model | PydanticOutputParser      ││  │
 │  │  │    - 2-shot structured-JSON prompt                   ││  │
-│  │  │    - One active provider via LLM_PROVIDER env var:  ││  │
-│  │  │      Gemini / Grok (xAI) / local Ollama              ││  │
+│  │  │    - Default via LLM_PROVIDER; API can override:   ││  │
+│  │  │      Gemini / Grok / Ollama / OpenRouter / Claude   ││  │
 │  │  │    - Return: {summary, threat_type, severity,       ││  │
 │  │  │      recommended_action}                             ││  │
 │  │  │    - No retry/backoff or response caching yet        ││  │
@@ -103,6 +103,10 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 
 ## Data Flow
 
+The provider names shown in the diagram are the original UI-facing set. The
+implemented backend registry also includes OpenRouter and Claude; the complete
+provider list is maintained in the component table and design decisions below.
+
 1. **User inputs raw threat text** → Analyze page textarea, with an optional per-request provider selection (Gemini/Grok/Ollama)
 2. **API receives request** → `/api/analyze` endpoint validates and processes
 3. **Preprocessing stage** → normalizes text, extracts IoCs with regex
@@ -123,7 +127,7 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 | **Input Validation** | Pydantic                | Schema validation, error handling                          |
 | **Cross-origin access** | flask-cors            | Env-configurable allowed origins (`CORS_ORIGINS`), required since frontend/backend are separate origins in dev and prod |
 | **Preprocessing**    | Regex (nltk staged, unused) | Text normalization, IoC extraction                     |
-| **LLM Service**      | LangChain (Gemini / Grok / Ollama) | Structured-output chain, provider registry       |
+| **LLM Service**      | LangChain (Gemini / Grok / Ollama / OpenRouter / Claude) | Structured-output chain, provider registry |
 | **Alert Engine**     | Custom Python (`backend/alert_engine.py`) | IoC reconciliation, severity cross-check   |
 | **Database**         | SQLAlchemy + SQLite     | Alert persistence, schema management                       |
 
@@ -131,7 +135,7 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 
 ## Key Design Decisions
 
-1. **Multi-provider LLM via LangChain, single active provider for MVP** — Gemini, Grok (xAI, reuses the OpenAI-compatible `ChatOpenAI` wrapper), or local Ollama, selected via `LLM_PROVIDER`. Provider-registry pattern makes a future per-request selector a small addition, not a rewrite.
+1. **Multi-provider LLM via LangChain** — the provider registry supports Gemini, Grok (xAI), local Ollama, OpenRouter, and Claude. `LLM_PROVIDER` supplies the default and the API accepts a per-request override. The current UI exposes Gemini, Grok, and Ollama; OpenRouter and Claude are available to the backend and evaluation harness.
 2. **Hybrid severity scoring** — Combine LLM output with keyword-based signals in `alert_engine.py`; the cross-check can only upgrade severity, never downgrade the LLM's call.
 3. **Structured JSON output** — LangChain `PydanticOutputParser` forces a deterministic schema (not free-text), with 2-shot examples in the prompt.
 4. **Rule-based preprocessing** — Regex-based IoC extraction is the sole, authoritative source of IoCs (reduces hallucination); the LLM is never asked to produce IoCs itself.
@@ -142,7 +146,7 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 9. **CORS via flask-cors, not a dev-only proxy** — since production hosts the frontend and backend on separate origins (see Deployment Model), CORS is solved once, robustly, via an env-configurable allowlist rather than a Vite dev proxy that wouldn't carry over to prod.
 10. **Both export formats implemented** — CSV for the (filtered) alerts list, JSON for a single alert detail — both generated client-side from data the API already returns, no new backend endpoints needed.
 
-**Not yet implemented** (flagged here so this doc doesn't silently overstate the system): response caching to avoid redundant LLM calls for identical inputs, retry/backoff on provider failures, numeric confidence scoring on alerts, and frontend automated tests (Vitest/React Testing Library) — deferred the same way the backend rate limiter was, as an explicit MVP-scope tradeoff, not an oversight.
+**Not yet implemented**: production response caching, production retry/backoff, numeric alert confidence scoring, rate limiting, frontend automated tests (Vitest/React Testing Library), and a PostgreSQL migration. The evaluation harness has its own pacing and limited retry logic; that is not production retry/backoff.
 
 ---
 
@@ -152,7 +156,7 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
   - **Known limitation**: Render's free-tier filesystem is ephemeral — the SQLite file is wiped on every redeploy, restart, or 15-minute-idle spin-down (see `backend/db.py`'s default `DATABASE_URL` path). Alert data does not persist across these events unless a paid persistent disk is attached, or the app is later migrated to a managed database (e.g. Render Postgres). Not fixed as part of the current deployment setup — documented so it isn't mistaken for a bug.
   - Free-tier services also spin down after 15 minutes of inactivity and take roughly 30-60 seconds to wake on the next request — the first request after idle time will be slow, not broken.
 - **Frontend** — Netlify (static build + React bundle), defined by the `netlify.toml` at the repo root (base directory `frontend/`, SPA redirect to `index.html` for `react-router-dom`'s client-side routes). Deployed frontend's `VITE_API_BASE_URL` must point at the deployed Render backend's actual URL (defaults to `http://localhost:5000` for local dev).
-- **LLM API** — Gemini, Grok (xAI), or OpenRouter paid API, or a self-hosted local Ollama instance (no per-call cost)
+- **LLM API** — Gemini, Grok (xAI), OpenRouter, Claude, or a self-hosted local Ollama instance (no per-call cost)
 - **Infrastructure** — Minimal, cost-effective (no serverless complexity)
 - See `docs/deployment.md` for the exact step-by-step deployment runbook.
 
@@ -160,7 +164,10 @@ ThreatGPT is an end-to-end LLM-assisted pipeline for cyber threat intelligence (
 
 ## Performance Targets
 
-- **Latency**: Average response time < 10 seconds per analyze request
-- **Throughput**: Handle 10–20 concurrent requests
-- **Cost**: < $0.10 per analyze call (depends on LLM pricing tier)
-- **Accuracy**: Threat-type classification F1 > 0.80 on test set
+- **Latency**: aspirational mean response time < 10 seconds; the binding course criterion is p95 < 15 seconds.
+- **Throughput**: Handle 10–20 concurrent requests (not load-tested yet).
+- **Cost**: < $0.10 per analyze call (provider-dependent estimate).
+- **Accuracy**: aspirational threat-type macro F1 > 0.80; the binding course criterion is > 0.75.
+
+The initial OpenRouter evaluation met the binding threat-type criterion (0.78)
+but missed the severity and p95-latency criteria. See `docs/evaluation_results.md`.
