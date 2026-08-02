@@ -6,6 +6,7 @@ const PROVIDERS = [
   { value: "grok", label: "Grok", verified: false },
   { value: "ollama", label: "Ollama (local)", verified: false },
   { value: "openrouter", label: "OpenRouter", verified: true },
+  { value: "claude", label: "Claude", verified: false },
 ];
 
 export default function ProviderSelector({ value, onChange, disabled }) {

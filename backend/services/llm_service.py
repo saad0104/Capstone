@@ -88,11 +88,22 @@ def _build_openrouter():
     )
 
 
+def _build_claude():
+    from langchain_anthropic import ChatAnthropic
+
+    return ChatAnthropic(
+        model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-5"),
+        api_key=os.getenv("ANTHROPIC_API_KEY"),
+        temperature=0,
+    )
+
+
 PROVIDER_REGISTRY = {
     "gemini": _build_gemini,
     "grok": _build_grok,
     "ollama": _build_ollama,
     "openrouter": _build_openrouter,
+    "claude": _build_claude,
 }
 
 

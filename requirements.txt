@@ -10,6 +10,7 @@ langchain-core
 langchain-openai
 langchain-google-genai
 langchain-ollama
+langchain-anthropic
 nltk
 scikit-learn
 numpy
